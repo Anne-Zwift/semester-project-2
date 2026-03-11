@@ -3,6 +3,7 @@
 *.local
 
 # Dependencies/Builds
+.vite/
 node_modules
 dist
 dist-ssr
