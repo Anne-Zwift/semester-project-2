@@ -1,0 +1,1 @@
+/**Renders the main Landing Page structure */
