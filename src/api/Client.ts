@@ -1,5 +1,6 @@
 import { BASE_URL } from '../utils/constants';
 import type { ApiResponse } from '../types/Api';
+import { store } from '../utils/store';
 
 /**
  * The generic API Client function that handles the core logic of making an API call.
@@ -24,6 +25,16 @@ export async function apiClient<T>(
     'Content-Type': 'application/json',
     ...options.headers,
   });
+
+  const apiKey = store.getApiKey();
+  if (apiKey) {
+    headers.set('X-Noroff-API-Key', apiKey);
+  }
+
+  const accessToken = store.getToken();
+  if (accessToken) {
+    headers.set('Authorization', `Bearer ${accessToken}`);
+  }
 
   const response = await fetch(url, {
     ...options,
