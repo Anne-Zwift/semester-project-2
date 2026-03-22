@@ -6,7 +6,7 @@
  * @returns {HTMLDivElement} The container element for the search input component.
  */
 
-export function SearchBar(onSearch: (query: string) => void): HTMLDivElement {
+export function SearchBar(onSearch: (value: string) => void): HTMLDivElement {
   const container = document.createElement('div');
   container.className = 'relative max-w-md w-full group';
 
