@@ -1,4 +1,6 @@
 @import 'tailwindcss';
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap');
 
 @theme {
   /* Branding Colors */
@@ -13,6 +15,17 @@
   --color-warning: #ffd493;
 
   /* Custom Fonts */
+  --font-sans: 'Geist', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace;
+}
+
+@layer components {
+  .button-primary {
+    @apply block w-full text-center py-2 px-4 bg-navy text-white rounded-full font-sans font-semibold hover:bg-navy/90 transition-all shadow-sm active:scale-95;
+  }
+  .button-outline {
+    @apply block w-full text-center py-2 px-4 border border-navy text-navy rounded-full font-semibold hover:bg-navy hover:text-white transition-all;
+  }
 }
 
 /* :root {
