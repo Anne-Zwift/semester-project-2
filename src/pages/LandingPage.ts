@@ -10,15 +10,8 @@ import { SearchBar } from '../components/SearchBar';
  * @returns {Promise<void>} the main container for the page content.
  */
 
-export async function LandingPage(): Promise<void> {
-  const container = document.querySelector<HTMLDivElement>('#content-area');
-
-  if (!container) {
-    console.error('Target container #content-area not found');
-    return;
-  }
-
-  container.replaceChildren();
+export async function LandingPage(): Promise<HTMLElement> {
+  const container = document.createElement('div');
 
   const header = document.createElement('header');
   header.className =
@@ -60,13 +53,14 @@ export async function LandingPage(): Promise<void> {
     renderListings(allListings, gridContainer);
   } catch (error) {
     console.error(error);
-    container.replaceChildren();
+    gridContainer.replaceChildren();
     const errorMsg = document.createElement('p');
     errorMsg.className =
       'mx-auto text-center justify-center items-center w-1/2 text-white py-4 px-4 bg-error rounded-lg';
     errorMsg.textContent = 'Failed to load auctions. Please try again later.';
     gridContainer.appendChild(errorMsg);
   }
+  return container;
 }
 
 function renderListings(listings: Listing[], gridTarget: HTMLElement) {
