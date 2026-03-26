@@ -35,9 +35,7 @@ export async function router(): Promise<void> {
 
   pageRoot.replaceChildren();
 
-const route = path.startsWith('/listing')
-? DetailsPage
-: routes[path];
+  const route = path.startsWith('/listing') ? DetailsPage : routes[path];
 
   if (route) {
     const page = await route();
@@ -48,6 +46,4 @@ const route = path.startsWith('/listing')
     errorHeading.textContent = '404 - Page Not Found';
     pageRoot.appendChild(errorHeading);
   }
-
-  
 }

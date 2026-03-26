@@ -13,13 +13,11 @@ import { router } from '../router/router';
 export async function DetailsPage(): Promise<HTMLElement> {
   const container = document.createElement('div');
 
-const loader = document.createElement('p');
-loader.textContent = 'Loading listing...';
-loader.className = 'min-h-[300px] text-center py-10';
-container.appendChild(loader);
+  const loader = document.createElement('p');
+  loader.textContent = 'Loading listing...';
+  loader.className = 'min-h-[300px] text-center py-10';
+  container.appendChild(loader);
 
-
-  
   const params = new URLSearchParams(window.location.search);
   const id = params.get('id');
 
@@ -39,7 +37,6 @@ container.appendChild(loader);
       return container;
     }
 
-
     const pageWrapper = document.createElement('div');
     pageWrapper.className =
       'max-w-7xl mx-auto p-6 grid grid-cols-1 md:grid-cols-2 gap-10';
@@ -56,8 +53,6 @@ container.appendChild(loader);
       window.history.pushState({}, '', '/');
       router();
     });
-
-    
 
     const infoContainer = document.createElement('div');
     infoContainer.className = 'flex flex-col gap-6';
@@ -77,7 +72,7 @@ container.appendChild(loader);
     const mainImg = document.createElement('img');
     mainImg.src =
       item.media?.[0]?.url || 'https://placehold.co/600x400?text=No+Image';
-      mainImg.alt = item.title;
+    mainImg.alt = item.title;
     mainImg.className =
       'w-full aspect-video object-cover rounded-2xl shadow-md';
     galleryContainer.appendChild(mainImg);
