@@ -1,6 +1,5 @@
-import type { RegisterPayload } from "../types/Auth";
-import type { LoginPayLoad } from "../types/Auth";
-
+import type { RegisterPayload } from '../types/Auth';
+import type { LoginPayLoad } from '../types/Auth';
 
 export function validateRegister(data: RegisterPayload): string | null {
   const usernameRegex = /^[a-zA-Z0-9_]+$/;
@@ -20,7 +19,6 @@ export function validateRegister(data: RegisterPayload): string | null {
 
   return null;
 }
-
 
 export function validateLogin(data: LoginPayLoad): string | null {
   if (!data.email) return 'Email is required';

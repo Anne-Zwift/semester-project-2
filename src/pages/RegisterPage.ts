@@ -1,19 +1,22 @@
-import { post } from "../api/Client";
-import { router } from "../router/router";
-import type { RegisterPayload } from "../types/Auth";
-import type { Profile } from "../types/Profile";
-import { validateRegister } from "../utils/validation";
+import { post } from '../api/Client';
+import { router } from '../router/router';
+import type { RegisterPayload } from '../types/Auth';
+import type { Profile } from '../types/Profile';
+import { validateRegister } from '../utils/validation';
 
 export async function RegisterPage(): Promise<HTMLElement> {
   const pageContainer = document.createElement('div');
-  pageContainer.className = 'w-full flex flex-col items-center justify-center py-12';
+  pageContainer.className =
+    'w-full flex flex-col items-center justify-center py-12';
 
   const card = document.createElement('div');
-  card.className = 'w-full max-w-md bg-white rounded-xl shadow-lg p-8 border border-gray-100';
+  card.className =
+    'w-full max-w-md bg-white rounded-xl shadow-lg p-8 border border-gray-100';
 
   const title = document.createElement('h2');
   title.textContent = 'Create Account';
-  title.className = 'text-2xl font-bold text-center mb-2 text-navy font-sans md:text-3xl';
+  title.className =
+    'text-2xl font-bold text-center mb-2 text-navy font-sans md:text-3xl';
 
   const registerForm = document.createElement('form');
   registerForm.id = 'registerForm';
@@ -29,12 +32,13 @@ export async function RegisterPage(): Promise<HTMLElement> {
   nameInput.type = 'text';
   nameInput.name = 'name';
   nameInput.required = true;
-  nameInput.className = 'w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-navy outline-none';
+  nameInput.className =
+    'w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-navy outline-none';
 
   formGroup.append(nameLabel, nameInput);
 
   const emailGroup = document.createElement('div');
-  
+
   const emailLabel = document.createElement('label');
   emailLabel.textContent = 'Email';
   emailLabel.className = 'block text-sm font-medium text-navy';
@@ -43,7 +47,8 @@ export async function RegisterPage(): Promise<HTMLElement> {
   emailInput.type = 'email';
   emailInput.name = 'email';
   emailInput.required = true;
-  emailInput.className = 'w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-navy outline-none';
+  emailInput.className =
+    'w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-navy outline-none';
 
   emailGroup.append(emailLabel, emailInput);
 
@@ -57,12 +62,12 @@ export async function RegisterPage(): Promise<HTMLElement> {
   passwordInput.type = 'password';
   passwordInput.name = 'password';
   passwordInput.required = true;
-  passwordInput.className = 'w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-navy outline-none';
+  passwordInput.className =
+    'w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-navy outline-none';
 
   const passwordValueText = document.createElement('p');
   passwordValueText.textContent = 'Password must be at least 8 characters.';
-  passwordValueText.className = 'text-xs text-gray-400 pt-1 pl-1'
-  
+  passwordValueText.className = 'text-xs text-gray-400 pt-1 pl-1';
 
   passwordGroup.append(passwordLabel, passwordInput, passwordValueText);
 
@@ -74,7 +79,7 @@ export async function RegisterPage(): Promise<HTMLElement> {
   submitButton.textContent = 'Register';
   submitButton.className = 'button-primary cursor-pointer';
 
-    const accountMessage = document.createElement('p');
+  const accountMessage = document.createElement('p');
   accountMessage.className = 'text-xs pl-1';
 
   const registerText = document.createTextNode('Already have an account? ');
@@ -90,7 +95,14 @@ export async function RegisterPage(): Promise<HTMLElement> {
 
   accountMessage.append(registerText, registerLink);
 
-  registerForm.append(formGroup, emailGroup, passwordGroup, errorMessage, submitButton, accountMessage);
+  registerForm.append(
+    formGroup,
+    emailGroup,
+    passwordGroup,
+    errorMessage,
+    submitButton,
+    accountMessage,
+  );
 
   card.append(title, registerForm);
   pageContainer.appendChild(card);
@@ -116,14 +128,14 @@ export async function RegisterPage(): Promise<HTMLElement> {
     }
 
     try {
-await post<Profile, RegisterPayload>('auth/register', formData);
-window.history.pushState({}, '', '/login');
-router();
-    }catch (error) {
-      errorMessage.textContent = error instanceof Error ? error.message : 'Registration failed';
+      await post<Profile, RegisterPayload>('auth/register', formData);
+      window.history.pushState({}, '', '/login');
+      router();
+    } catch (error) {
+      errorMessage.textContent =
+        error instanceof Error ? error.message : 'Registration failed';
       errorMessage.classList.remove('hidden');
     }
-    
   });
   return pageContainer;
 }
