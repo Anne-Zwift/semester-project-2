@@ -1,28 +1,30 @@
-import { post } from "../api/Client";
-import { router } from "../router/router";
-import type { LoginPayLoad } from "../types/Auth";
-import type { Profile } from "../types/Profile";
-import { validateLogin } from "../utils/validation";
-import { store } from "../utils/store";
-
+import { post } from '../api/Client';
+import { router } from '../router/router';
+import type { LoginPayLoad } from '../types/Auth';
+import type { Profile } from '../types/Profile';
+import { validateLogin } from '../utils/validation';
+import { store } from '../utils/store';
 
 export async function LoginPage(): Promise<HTMLElement> {
-  const pageContainer =document.createElement('div');
-  pageContainer.className = 'w-full flex flex-col items-center justify-center py-12';
+  const pageContainer = document.createElement('div');
+  pageContainer.className =
+    'w-full flex flex-col items-center justify-center py-12';
 
   const card = document.createElement('div');
-  card.className = 'w-full max-w-md bg-white rounded-xl shadow-lg p-8 border-gray-100';
+  card.className =
+    'w-full max-w-md bg-white rounded-xl shadow-lg p-8 border-gray-100';
 
   const title = document.createElement('h2');
   title.textContent = 'Log In';
-  title.className = 'text-2xl font-bold text-center mb-2 text-navy font-sans md:text-3xl';
+  title.className =
+    'text-2xl font-bold text-center mb-2 text-navy font-sans md:text-3xl';
 
   const loginForm = document.createElement('form');
   loginForm.id = 'loginForm';
   loginForm.className = 'space-y-4';
 
   const emailGroup = document.createElement('div');
-  
+
   const emailLabel = document.createElement('label');
   emailLabel.textContent = 'Email';
   emailLabel.className = 'block text-sm font-medium text-navy';
@@ -31,7 +33,8 @@ export async function LoginPage(): Promise<HTMLElement> {
   emailInput.type = 'email';
   emailInput.name = 'email';
   emailInput.required = true;
-  emailInput.className = 'w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-navy outline-none';
+  emailInput.className =
+    'w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-navy outline-none';
 
   emailGroup.append(emailLabel, emailInput);
 
@@ -45,7 +48,8 @@ export async function LoginPage(): Promise<HTMLElement> {
   passwordInput.type = 'password';
   passwordInput.name = 'password';
   passwordInput.required = true;
-  passwordInput.className = 'w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-navy outline-none';
+  passwordInput.className =
+    'w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-navy outline-none';
 
   passwordGroup.append(passwordLabel, passwordInput);
 
@@ -73,7 +77,13 @@ export async function LoginPage(): Promise<HTMLElement> {
 
   accountMessage.append(registerText, registerLink);
 
-  loginForm.append(emailGroup, passwordGroup, errorMessage, submitButton, accountMessage);
+  loginForm.append(
+    emailGroup,
+    passwordGroup,
+    errorMessage,
+    submitButton,
+    accountMessage,
+  );
 
   card.append(title, loginForm);
   pageContainer.appendChild(card);
@@ -98,22 +108,24 @@ export async function LoginPage(): Promise<HTMLElement> {
     }
 
     try {
-      const response = await post<Profile & { accessToken: string}, LoginPayLoad>('auth/login', formData);
+      const response = await post<
+        Profile & { accessToken: string },
+        LoginPayLoad
+      >('auth/login', formData);
 
       if (response?.data) {
-        const {accessToken, ...profile} = response.data;
+        const { accessToken, ...profile } = response.data;
         store.saveLogin(profile, accessToken);
 
         window.history.pushState({}, '', '/');
         router();
       }
-    }catch (error) {
-      errorMessage.textContent = error instanceof Error ? error.message : 'Log in failed';
+    } catch (error) {
+      errorMessage.textContent =
+        error instanceof Error ? error.message : 'Log in failed';
       errorMessage.classList.remove('hidden');
     }
-  
   });
 
   return pageContainer;
-
 }
