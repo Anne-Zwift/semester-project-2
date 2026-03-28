@@ -16,4 +16,5 @@ export interface Profile {
   wins?: Listing[];
   bids?: Bid[];
   _count?: ProfileCount;
+  venueManager?: boolean;
 }

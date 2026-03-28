@@ -1,23 +1,13 @@
 import { LandingPage } from '../pages/LandingPage';
 import { DetailsPage } from '../pages/DetailsPage';
+import { RegisterPage } from '../pages/RegisterPage';
+import { LoginPage } from '../pages/LoginPage';
 
 const routes: Record<string, () => Promise<HTMLElement>> = {
   '/': LandingPage,
   '/listing': DetailsPage,
-
-  '/login': async () => {
-    const div = document.createElement('div');
-    div.textContent = 'Login Page coming soon...';
-    div.className = 'text-center mt-20 text-gray-500 italic';
-    return div;
-  },
-
-  '/register': async () => {
-    const div = document.createElement('div');
-    div.textContent = 'Register Page coming soon...';
-    div.className = 'text-center mt-20 text-gray-500 italic';
-    return div;
-  },
+  '/register': RegisterPage,
+  '/login': LoginPage,
 
   '/profile': async () => {
     const div = document.createElement('div');

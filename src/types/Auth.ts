@@ -12,3 +12,14 @@ export interface AuthState {
   apiKey?: string | null;
   isLoggedIn: boolean;
 }
+
+export interface RegisterPayload {
+  name: string;
+  email: string;
+  password: string;
+}
+
+export interface LoginPayLoad {
+  email: string;
+  password: string;
+}
