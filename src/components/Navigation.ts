@@ -1,4 +1,5 @@
 import { router } from '../router/router';
+import { store } from '../utils/store';
 
 /**
  * Creates the main navigation bar
@@ -11,7 +12,7 @@ export function Navigation(): HTMLElement {
   navigation.className =
     'sticky top-0 z-50 w-full flex h-16 items-center justify-between px-4 md:px-8 bg-white/80 backdrop-blur-md border-b border-gray-100';
 
-  const isLoggedIn = Boolean(localStorage.getItem('token'));
+  const isLoggedIn = Boolean(store.getToken());
   const currentPath = window.location.pathname;
 
   const brand = document.createElement('div');
@@ -48,7 +49,6 @@ export function Navigation(): HTMLElement {
       hideIfLoggedIn: true,
     },
     { name: 'Profile', path: '/profile', requiresLogin: true },
-    { name: 'Logout', path: '/logout', requiresLogin: true },
   ];
 
   allLinks.forEach((link) => {
@@ -83,7 +83,7 @@ export function Navigation(): HTMLElement {
 
     const amount = document.createElement('span');
     amount.className = 'text-xs font-mono font-bold text-navy';
-    amount.textContent = '1,000';
+    amount.textContent = String(store.getCredits());
 
     const designationLabel = document.createElement('span');
     designationLabel.className =
@@ -95,7 +95,8 @@ export function Navigation(): HTMLElement {
     const profileAvatar = document.createElement('div');
     profileAvatar.className =
       'w-9 h-9 rounded-full bg-navy flex items-center justify-center text-xs text-white font-bold border-2 border-gray-100 shadow-sm';
-    profileAvatar.textContent = 'AZ'; //Placeholder
+    const user = store.getUser?.();
+    profileAvatar.textContent = user?.name?.slice(0, 2).toUpperCase() || '?';
 
     profileWrapper.append(credits, profileAvatar);
     authSection.prepend(profileWrapper);
@@ -105,7 +106,7 @@ export function Navigation(): HTMLElement {
     logoutButton.className =
       'text-sm text-red-600 hover:text-red-700 font-medium hover:underline';
     logoutButton.addEventListener('click', () => {
-      localStorage.removeItem('token');
+      store.clear();
       window.history.pushState({}, '', '/');
       router();
     });

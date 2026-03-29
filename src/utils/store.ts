@@ -41,6 +41,10 @@ class Store {
     return localStorage.getItem(STORAGE_KEY_API_KEY);
   }
 
+  public getUser(): Profile | null {
+    return this.state.user;
+  }
+
   public getCredits(): number {
     return this.state.user?.credits ?? 0;
   }
