@@ -24,5 +24,14 @@ export function validateLogin(data: LoginPayLoad): string | null {
   if (!data.email) return 'Email is required';
   if (!data.password) return 'Password is required';
 
+  const emailRegex = /^[^\s@]+@(stud\.)?noroff\.no$/;
+  if (!emailRegex.test(data.email)) {
+    return 'Email must be a valid stud.noroff.no or noroff.no address';
+  }
+
+  if (data.password.length < 8) {
+    return 'Password must be at least 8 characters';
+  }
+
   return null;
 }

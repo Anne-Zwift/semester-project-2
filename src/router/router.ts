@@ -2,6 +2,11 @@ import { LandingPage } from '../pages/LandingPage';
 import { DetailsPage } from '../pages/DetailsPage';
 import { RegisterPage } from '../pages/RegisterPage';
 import { LoginPage } from '../pages/LoginPage';
+import { Navigation } from '../components/Navigation';
+import { store } from '../utils/store';
+
+const protectedRoutes = ['/profile'];
+const authRoutes = ['/login', '/register'];
 
 const routes: Record<string, () => Promise<HTMLElement>> = {
   '/': LandingPage,
@@ -18,12 +23,33 @@ const routes: Record<string, () => Promise<HTMLElement>> = {
 };
 
 export async function router(): Promise<void> {
+  const app = document.querySelector<HTMLElement>('#app');
+
+  if (!app) return;
+
   const path = window.location.pathname;
-  const pageRoot = document.querySelector<HTMLElement>('#content-area');
+  const isLoggedIn = Boolean(store.getToken());
 
-  if (!pageRoot) return;
+  if (!isLoggedIn && protectedRoutes.includes(path)) {
+    window.history.pushState({}, '', '/login');
+    return router();
+  }
 
-  pageRoot.replaceChildren();
+  if (isLoggedIn && authRoutes.includes(path)) {
+    window.history.pushState({}, '', '/');
+    return router();
+  }
+
+  while (app.firstChild) {
+    app.removeChild(app.firstChild);
+  }
+
+  const nav = Navigation();
+
+  const pageRoot = document.createElement('div');
+  pageRoot.id = 'content-area';
+
+  app.append(nav, pageRoot);
 
   const route = path.startsWith('/listing') ? DetailsPage : routes[path];
 
