@@ -4,6 +4,7 @@ import { RegisterPage } from '../pages/RegisterPage';
 import { LoginPage } from '../pages/LoginPage';
 import { Navigation } from '../components/Navigation';
 import { store } from '../utils/store';
+import { ProfilePage } from '../pages/ProfilePage';
 
 const protectedRoutes = ['/profile'];
 const authRoutes = ['/login', '/register'];
@@ -13,13 +14,7 @@ const routes: Record<string, () => Promise<HTMLElement>> = {
   '/listing': DetailsPage,
   '/register': RegisterPage,
   '/login': LoginPage,
-
-  '/profile': async () => {
-    const div = document.createElement('div');
-    div.textContent = 'Profile Page coming soon...';
-    div.className = 'text-center mt-20 text-gray-500 italic';
-    return div;
-  },
+  '/profile': ProfilePage,
 };
 
 export async function router(): Promise<void> {
