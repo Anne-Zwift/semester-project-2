@@ -1,4 +1,6 @@
-export async function ProfilePage(): Promise<HTMLElement> {
+import type { Profile } from '../types/Profile';
+
+export async function ProfilePage(user?: Profile): Promise<HTMLElement> {
   const pageContainer = document.createElement('div');
   pageContainer.className =
     'w-full flex flex-col items-center justify-center py-12';
@@ -17,10 +19,17 @@ export async function ProfilePage(): Promise<HTMLElement> {
   const avatarWrapper = document.createElement('div');
   avatarWrapper.className = 'relative z-10 flex items-center gap-4';
 
+  const userInitials =
+    user?.name
+      ?.split(' ')
+      .map((n: string) => n[0])
+      .join('')
+      .toUpperCase() || 'AZ';
+
   const avatar = document.createElement('div');
   avatar.className =
     'w-24 h-24 rounded-full bg-navy border-4 border-white flex items-center justify-center text-white text-xl font-bold shadow-lg mx-auto';
-  avatar.textContent = 'AZ';
+  avatar.textContent = userInitials;
 
   const actions = document.createElement('div');
   actions.className = 'flex gap-2';
@@ -35,20 +44,20 @@ export async function ProfilePage(): Promise<HTMLElement> {
 
   const name = document.createElement('h3');
   name.className = 'text-lg font-bold font-sans mt-2 text-navy';
-  name.textContent = 'Username';
+  name.textContent = user?.name || 'Unknown User';
 
   const email = document.createElement('p');
   email.className = 'text-sm text-gray-500';
-  email.textContent = 'user@stud.noroff.no';
+  email.textContent = user?.email || 'user@stud.noroff.no';
 
   const credits = document.createElement('p');
   credits.className =
     'max-w-max text-xs md:text-sm font-semibold font-mono text-navy uppercase bg-gray-200 px-2 py-2 rounded-full mt-2';
-  credits.textContent = 'Credits: 1000';
+  credits.textContent = `Credits: ${user?.credits ?? 0}`;
 
   const bio = document.createElement('p');
   bio.className = 'text-sm text-gray-600 mt-4 text-center max-w-md mx-auto';
-  bio.textContent = 'User bio text.';
+  bio.textContent = user?.bio || 'No bio added yet.';
 
   actions.append(editButton, createListingButton);
   avatarWrapper.append(avatar, actions);
@@ -76,6 +85,29 @@ export async function ProfilePage(): Promise<HTMLElement> {
 
   tabs.append(listingsTab, bidsTab, winsTab);
   profileCard.appendChild(tabs);
+
+  const tabContent = document.createElement('div');
+  tabContent.className = 'mt-6 text-center text-gray-500';
+  profileCard.appendChild(tabContent);
+
+  const tabsConfig = [
+    { name: 'Listings', element: listingsTab },
+    { name: 'Bids', element: bidsTab },
+    { name: 'Wins', element: winsTab },
+  ];
+
+  function setActiveTab(tab: string) {
+    tabContent.textContent = `${tab} content`;
+
+    const active = tabsConfig.find((t) => t.name === tab);
+    active?.element.classList.add('border-navy');
+  }
+
+  tabsConfig.forEach(({ name, element }) => {
+    element.addEventListener('click', () => setActiveTab(name));
+  });
+
+  setActiveTab('Listings');
 
   pageContainer.appendChild(profileCard);
   return pageContainer;
