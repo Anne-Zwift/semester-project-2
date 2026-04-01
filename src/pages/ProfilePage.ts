@@ -8,15 +8,30 @@ export async function ProfilePage(): Promise<HTMLElement> {
     'w-full max-w-md bg-white rounded-xl shadow-lg p-8 border border-gray-100';
 
   const banner = document.createElement('div');
-  banner.className = 'w-full h-32 bg-gray-200 rounded-lg mb-6';
+  banner.className =
+    'w-full h-40 bg-gradient-to-r from-navy to-navy/50 rounded-lg mb-6';
 
   const header = document.createElement('div');
-  header.className = 'flex flex-col items-center -mt-16 mb-4';
+  header.className = 'relative w-full -mt-12 mb-4';
+
+  const avatarWrapper = document.createElement('div');
+  avatarWrapper.className = 'relative z-10 flex items-center gap-4';
 
   const avatar = document.createElement('div');
   avatar.className =
-    'w-24 h-24 rounded-full bg-navy border-4 border-white flex items-center justify-center text-white text-xl font-bold shadow-md';
+    'w-24 h-24 rounded-full bg-navy border-4 border-white flex items-center justify-center text-white text-xl font-bold shadow-lg mx-auto';
   avatar.textContent = 'AZ';
+
+  const actions = document.createElement('div');
+  actions.className = 'flex gap-2';
+
+  const editButton = document.createElement('button');
+  editButton.className = 'button-action';
+  editButton.textContent = 'Edit';
+
+  const createListingButton = document.createElement('button');
+  createListingButton.className = 'button-action';
+  createListingButton.textContent = 'Create';
 
   const name = document.createElement('h3');
   name.className = 'text-lg font-bold font-sans mt-2 text-navy';
@@ -28,16 +43,40 @@ export async function ProfilePage(): Promise<HTMLElement> {
 
   const credits = document.createElement('p');
   credits.className =
-    'text-sm font-semibold font-mono text-navy uppercase mt-1';
+    'max-w-max text-xs md:text-sm font-semibold font-mono text-navy uppercase bg-gray-200 px-2 py-2 rounded-full mt-2';
   credits.textContent = 'Credits: 1000';
 
   const bio = document.createElement('p');
-  bio.className = 'text-sm text-gray-600 mt-4 text-center';
+  bio.className = 'text-sm text-gray-600 mt-4 text-center max-w-md mx-auto';
   bio.textContent = 'User bio text.';
 
-  header.append(avatar, name, email, credits);
+  actions.append(editButton, createListingButton);
+  avatarWrapper.append(avatar, actions);
+  header.append(avatarWrapper, name, email, credits);
   profileCard.append(banner, header, bio);
-  pageContainer.appendChild(profileCard);
 
+  const tabs = document.createElement('div');
+  tabs.className =
+    'flex gap-6 mt-8 border-t border-gray-300 pt-4 justify-center';
+
+  const listingsTab = document.createElement('button');
+  listingsTab.textContent = 'Listings';
+  listingsTab.className =
+    'font-bold text-navy hover:text-navy/90 pb-1 border-b-2 border-transparent hover:border-navy transition-all';
+
+  const bidsTab = document.createElement('button');
+  bidsTab.textContent = 'Bids';
+  bidsTab.className =
+    'font-bold text-navy hover:text-navy/90 pb-1 border-b-2 border-transparent hover:border-navy transition-all';
+
+  const winsTab = document.createElement('button');
+  winsTab.textContent = 'Wins';
+  winsTab.className =
+    'font-bold text-navy hover:text-navy/90 pb-1 border-b-2 border-transparent hover:border-navy transition-all';
+
+  tabs.append(listingsTab, bidsTab, winsTab);
+  profileCard.appendChild(tabs);
+
+  pageContainer.appendChild(profileCard);
   return pageContainer;
 }
