@@ -13,7 +13,10 @@ import {
  * - Stores the authentication token, API Key and profile data to localStorage.
  * - Rehydrates state automatically upon class instantiation (page refresh).
  * - Provides helper methods for retrieving credentials and user balance.
+ * - Supports reactive subscriptions for UI re-rendering on state changes.
  */
+
+type Subscriber = () => void;
 
 class Store {
   private state: AuthState = {
@@ -22,6 +25,19 @@ class Store {
     isLoggedIn: false,
   };
 
+  private subscribers: Set<Subscriber> = new Set();
+
+  public subscribe(callback: Subscriber): () => void {
+    this.subscribers.add(callback);
+    return () => {
+      this.subscribers.delete(callback);
+    };
+  }
+
+  private notify(): void {
+    this.subscribers.forEach((cb) => cb());
+  }
+
   public saveLogin(profile: Profile, accessToken: string) {
     this.state.user = profile;
     this.state.accessToken = accessToken;
@@ -29,6 +45,8 @@ class Store {
 
     localStorage.setItem(STORAGE_KEY_ACCESS_TOKEN, accessToken);
     localStorage.setItem(STORAGE_KEY_PROFILE, JSON.stringify(profile));
+
+    this.notify();
   }
 
   public getToken(): string | null {
@@ -42,7 +60,16 @@ class Store {
   }
 
   public getUser(): Profile | null {
-    return this.state.user;
+    if (this.state.user) return this.state.user;
+
+    const savedProfile = localStorage.getItem(STORAGE_KEY_PROFILE);
+    if (!savedProfile) return null;
+
+    try {
+      return JSON.parse(savedProfile);
+    } catch {
+      return null;
+    }
   }
 
   public getCredits(): number {
@@ -52,10 +79,10 @@ class Store {
   constructor() {
     const savedToken = localStorage.getItem(STORAGE_KEY_ACCESS_TOKEN);
     const savedProfile = localStorage.getItem(STORAGE_KEY_PROFILE);
-    const savedApiKey = localStorage.getItem(STORAGE_KEY_API_KEY);
+
     if (savedToken && savedProfile) {
       this.state.accessToken = savedToken;
-      this.state.apiKey = savedApiKey;
+
       this.state.isLoggedIn = true;
       try {
         this.state.user = JSON.parse(savedProfile);
@@ -73,6 +100,8 @@ class Store {
     localStorage.removeItem(STORAGE_KEY_ACCESS_TOKEN);
     localStorage.removeItem(STORAGE_KEY_PROFILE);
     localStorage.removeItem(STORAGE_KEY_API_KEY);
+
+    this.notify();
   }
 }
 
