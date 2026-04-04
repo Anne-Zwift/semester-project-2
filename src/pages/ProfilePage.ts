@@ -17,7 +17,7 @@ export async function ProfilePage(): Promise<HTMLElement> {
   const skeleton = SkeletonProfile();
   profileCard.appendChild(skeleton);
 
-  /*       const user = store.getUser(); */
+  /*         const user = store.getUser(); */
 
   let profileData: Profile | null = store.getUser();
   let fetchFailed = false;
@@ -143,16 +143,50 @@ export async function ProfilePage(): Promise<HTMLElement> {
     { name: 'Wins', element: winsTab },
   ];
 
-  function setActiveTab(tab: string) {
-    tabContent.textContent = `${tab} content`;
+  async function renderListings() {
+    tabContent.replaceChildren();
 
+    const loading = document.createElement('p');
+    loading.textContent = 'Loading listings...';
+    tabContent.appendChild(loading);
+
+    const listings = ['Item 1', 'Item 2'];
+
+    tabContent.replaceChildren();
+
+    if (listings.length === 0) {
+      const empty = document.createElement('p');
+      empty.textContent = 'No listings yet';
+      tabContent.appendChild(empty);
+      return;
+    }
+
+    listings.forEach((item) => {
+      const itemContainer = document.createElement('div');
+      itemContainer.textContent = item;
+      itemContainer.className = 'p-2 border rounded mb-2';
+      tabContent.appendChild(itemContainer);
+    });
+  }
+
+  function setActiveTab(tab: string) {
     tabsConfig.forEach(({ element }) =>
       element.classList.remove('border-navy'),
     );
     const active = tabsConfig.find((t) => t.name === tab);
     active?.element.classList.add('border-navy');
 
-    tabContent.textContent = `${tab} content`;
+    if (tab === 'Listings') {
+      renderListings();
+    }
+    if (tab === 'Bids') {
+      tabContent.replaceChildren();
+      tabContent.textContent = 'No bids yet';
+    }
+    if (tab === 'Wins') {
+      tabContent.replaceChildren();
+      tabContent.textContent = 'No wins yet';
+    }
   }
 
   tabsConfig.forEach(({ name, element }) => {
