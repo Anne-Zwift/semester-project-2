@@ -38,14 +38,14 @@ class Store {
     this.subscribers.forEach((cb) => cb());
   }
 
-  public saveLogin(profile: Profile, accessToken: string) {
+  public saveLogin(profile: Profile, accessToken: string, apiKey: string) {
     this.state.user = profile;
     this.state.accessToken = accessToken;
     this.state.isLoggedIn = true;
 
     localStorage.setItem(STORAGE_KEY_ACCESS_TOKEN, accessToken);
     localStorage.setItem(STORAGE_KEY_PROFILE, JSON.stringify(profile));
-
+    localStorage.setItem(STORAGE_KEY_API_KEY, apiKey);
     this.notify();
   }
 

@@ -4,6 +4,7 @@ import type { LoginPayLoad } from '../types/Auth';
 import type { Profile } from '../types/Profile';
 import { validateLogin } from '../utils/validation';
 import { store } from '../utils/store';
+import { BASE_URL} from '../utils/constants';
 
 export async function LoginPage(): Promise<HTMLElement> {
   const pageContainer = document.createElement('div');
@@ -115,11 +116,30 @@ export async function LoginPage(): Promise<HTMLElement> {
 
       if (response?.data) {
         const { accessToken, ...profile } = response.data;
-        store.saveLogin(profile, accessToken);
 
-        window.history.pushState({}, '', '/');
-        router();
-      }
+const keyResponse = await fetch(`${BASE_URL}/auth/create-api-key`, {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${accessToken}`,
+  },
+  body: JSON.stringify({name: "My API Key"})
+});
+
+if (keyResponse.ok) {
+  const keyData = await keyResponse.json();
+  const apiKey = keyData.data?.key || keyData.key || keyData.apiKey;
+  
+  if (apiKey) {
+    store.saveLogin(profile, accessToken, apiKey);
+
+    window.history.pushState({}, '', '/profile');
+  }
+} else {
+  throw new Error("Login successful, but could not generate API Key");
+  
+}
+}
     } catch (error) {
       errorMessage.textContent =
         error instanceof Error ? error.message : 'Log in failed';
