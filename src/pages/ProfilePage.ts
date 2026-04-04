@@ -195,6 +195,33 @@ export async function ProfilePage(): Promise<HTMLElement> {
     });
   }
 
+  async function renderWins() {
+    tabContent.replaceChildren();
+
+    const loading = document.createElement('p');
+    loading.textContent = 'Loading wins...';
+    tabContent.appendChild(loading);
+
+    const wins = ['Item 1', 'Item 2'];
+
+    tabContent.replaceChildren();
+
+    if (wins.length === 0) {
+      const empty = document.createElement('p');
+      empty.textContent = 'No wins yet';
+      tabContent.appendChild(empty);
+      return;
+    }
+
+    wins.forEach((item) => {
+      const itemContainer = document.createElement('div');
+      itemContainer.textContent = item;
+      itemContainer.className =
+        'p-2 border rounded mb-2 bg-green-200 text-green-700 font-bold italic';
+      tabContent.appendChild(itemContainer);
+    });
+  }
+
   function setActiveTab(tab: string) {
     tabsConfig.forEach(({ element }) =>
       element.classList.remove('border-navy'),
@@ -209,8 +236,7 @@ export async function ProfilePage(): Promise<HTMLElement> {
       renderBids();
     }
     if (tab === 'Wins') {
-      tabContent.replaceChildren();
-      tabContent.textContent = 'No wins yet';
+      renderWins();
     }
   }
 
