@@ -2,6 +2,11 @@ import { get } from './Client';
 import type { Profile } from '../types/Profile';
 import type { ApiResponse } from '../types/Api';
 import { store } from '../utils/store';
+import type { Listing, Bid } from '../types/Listing';
+
+export interface UserBid extends Bid {
+  listing?: Listing;
+}
 
 export async function fetchProfile(): Promise<ApiResponse<Profile> | null> {
   const user = store.getUser();
@@ -17,3 +22,25 @@ export async function fetchProfile(): Promise<ApiResponse<Profile> | null> {
   }
   return response;
 }
+
+export async function fetchProfileListings(
+  name: string,
+): Promise<ApiResponse<Listing[]> | null> {
+  return get<Listing[]>(`auction/profiles/${name}/listings?_bids=true`);
+}
+
+export async function fetchProfileBids(
+  name: string,
+): Promise<ApiResponse<UserBid[]> | null> {
+  return get<UserBid[]>(`auction/profiles/${name}/bids?_listings=true`);
+}
+
+export async function fetchProfileWins(
+  name: string,
+): Promise<ApiResponse<Listing[]> | null> {
+  return get<Listing[]>(`auction/profiles/${name}/wins`);
+}
+/* // search for profiles by name or bio properties
+export async function fetchProfileSearch(query: string): Promise<ApiResponse<Profile[]> | null> {
+  return get<Profile[]>(`auction/profiles/search?q=${query}`);
+} */

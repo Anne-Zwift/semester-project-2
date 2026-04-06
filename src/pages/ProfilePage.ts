@@ -1,7 +1,14 @@
-import { fetchProfile } from '../api/Profile';
+import {
+  fetchProfile,
+  fetchProfileListings,
+  fetchProfileBids,
+  fetchProfileWins,
+} from '../api/Profile';
 import { store } from '../utils/store';
 import type { Profile } from '../types/Profile';
 import { SkeletonProfile } from '../components/SkeletonProfile';
+import type { Listing, UserBid } from '../types/Listing';
+import type { ApiResponse } from '../types/Api';
 
 export async function ProfilePage(): Promise<HTMLElement> {
   const pageContainer = document.createElement('div');
@@ -143,83 +150,39 @@ export async function ProfilePage(): Promise<HTMLElement> {
     { name: 'Wins', element: winsTab },
   ];
 
-  async function renderListings() {
+  async function renderTab<T>(
+    label: string,
+    fetchFn: () => Promise<ApiResponse<T[]> | null>,
+    renderItemFn: (_item: T) => HTMLElement,
+  ) {
     tabContent.replaceChildren();
 
     const loading = document.createElement('p');
-    loading.textContent = 'Loading listings...';
+    loading.className = 'text-gray-400 italic py-4';
+    loading.textContent = `Loading ${label}...`;
     tabContent.appendChild(loading);
 
-    const listings = ['Item 1', 'Item 2'];
+    try {
+      const result = await fetchFn();
+      const data = result?.data || [];
 
-    tabContent.replaceChildren();
+      tabContent.replaceChildren();
 
-    if (listings.length === 0) {
-      const empty = document.createElement('p');
-      empty.textContent = 'No listings yet';
-      tabContent.appendChild(empty);
-      return;
+      if (data.length === 0) {
+        const empty = document.createElement('p');
+        empty.className = 'py-4 text-gray-400';
+        empty.textContent = `No ${label} found.`;
+        tabContent.appendChild(empty);
+        return;
+      }
+
+      data.forEach((item) => {
+        const element = renderItemFn(item);
+        tabContent.appendChild(element);
+      });
+    } catch {
+      tabContent.textContent = `Failed to load ${label}.`;
     }
-
-    listings.forEach((item) => {
-      const itemContainer = document.createElement('div');
-      itemContainer.textContent = item;
-      itemContainer.className = 'p-2 border rounded mb-2';
-      tabContent.appendChild(itemContainer);
-    });
-  }
-
-  async function renderBids() {
-    tabContent.replaceChildren();
-
-    const loading = document.createElement('p');
-    loading.textContent = 'Loading bids...';
-    tabContent.appendChild(loading);
-
-    const bids = ['Item 1', 'Item 2'];
-
-    tabContent.replaceChildren();
-
-    if (bids.length === 0) {
-      const empty = document.createElement('p');
-      empty.textContent = 'No bids yet';
-      tabContent.appendChild(empty);
-      return;
-    }
-
-    bids.forEach((item) => {
-      const itemContainer = document.createElement('div');
-      itemContainer.textContent = item;
-      itemContainer.className = 'p-2 border rounded mb-2 bg-navy/90 text-white';
-      tabContent.appendChild(itemContainer);
-    });
-  }
-
-  async function renderWins() {
-    tabContent.replaceChildren();
-
-    const loading = document.createElement('p');
-    loading.textContent = 'Loading wins...';
-    tabContent.appendChild(loading);
-
-    const wins = ['Item 1', 'Item 2'];
-
-    tabContent.replaceChildren();
-
-    if (wins.length === 0) {
-      const empty = document.createElement('p');
-      empty.textContent = 'No wins yet';
-      tabContent.appendChild(empty);
-      return;
-    }
-
-    wins.forEach((item) => {
-      const itemContainer = document.createElement('div');
-      itemContainer.textContent = item;
-      itemContainer.className =
-        'p-2 border rounded mb-2 bg-green-200 text-green-700 font-bold italic';
-      tabContent.appendChild(itemContainer);
-    });
   }
 
   function setActiveTab(tab: string) {
@@ -230,13 +193,51 @@ export async function ProfilePage(): Promise<HTMLElement> {
     active?.element.classList.add('border-navy');
 
     if (tab === 'Listings') {
-      renderListings();
+      renderTab<Listing>(
+        'listings',
+        () => fetchProfileListings(profileData!.name),
+        (item) => {
+          const div = document.createElement('div');
+          div.className =
+            'p-3 border rounded-xl mb-2 text-left font-semibold text-navy';
+          div.textContent = item.title;
+          return div;
+        },
+      );
     }
     if (tab === 'Bids') {
-      renderBids();
+      renderTab<UserBid>(
+        'bids',
+        () => fetchProfileBids(profileData!.name),
+        (item) => {
+          const div = document.createElement('div');
+          div.className =
+            'p-3 border rounded-xl mb-2 text-left bg-gray-50 flex justify-between';
+
+          const title = document.createElement('span');
+          title.textContent = item.listing?.title || 'Unknown Listing';
+
+          const amount = document.createElement('span');
+          amount.className = 'font-mono text-blue-600';
+          amount.textContent = `${item.amount}credits`;
+
+          div.append(title, amount);
+          return div;
+        },
+      );
     }
     if (tab === 'Wins') {
-      renderWins();
+      renderTab<Listing>(
+        'wins',
+        () => fetchProfileWins(profileData!.name),
+        (item) => {
+          const div = document.createElement('div');
+          div.className =
+            'p-3 border rounded-xl mb-2 text-left bg-green-50 text-green-800 border-green-200';
+          div.textContent = `${item.title}`;
+          return div;
+        },
+      );
     }
   }
 
