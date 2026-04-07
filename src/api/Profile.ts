@@ -3,6 +3,7 @@ import type { Profile } from '../types/Profile';
 import type { ApiResponse } from '../types/Api';
 import { store } from '../utils/store';
 import type { Listing, Bid } from '../types/Listing';
+import { put } from './Client';
 
 export interface UserBid extends Bid {
   listing?: Listing;
@@ -44,3 +45,14 @@ export async function fetchProfileWins(
 export async function fetchProfileSearch(query: string): Promise<ApiResponse<Profile[]> | null> {
   return get<Profile[]>(`auction/profiles/search?q=${query}`);
 } */
+
+export async function updateProfile(data: {
+  banner?: { url: string; alt?: string };
+  avatar?: { url: string; alt?: string };
+  bio?: string;
+}): Promise<ApiResponse<Profile> | null> {
+  const name = store.getUser()?.name;
+  if (!name) return null;
+
+  return await put<Profile>(`/auction/profiles/${name}`, data);
+}

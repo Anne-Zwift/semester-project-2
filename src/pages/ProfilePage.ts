@@ -9,6 +9,7 @@ import type { Profile } from '../types/Profile';
 import { SkeletonProfile } from '../components/SkeletonProfile';
 import type { Listing, UserBid } from '../types/Listing';
 import type { ApiResponse } from '../types/Api';
+import { EditProfileModal } from '../components/EditProfileModal';
 
 export async function ProfilePage(): Promise<HTMLElement> {
   const pageContainer = document.createElement('div');
@@ -61,6 +62,16 @@ export async function ProfilePage(): Promise<HTMLElement> {
   banner.className =
     'w-full h-40 bg-gradient-to-r from-navy to-navy/50 rounded-lg mb-6';
 
+  if (profileData?.banner?.url) {
+    const img = document.createElement('img');
+    img.src = profileData.banner.url;
+    img.alt = profileData.banner.alt || `${profileData.name}'s banner`;
+    img.className = 'w-full h-full rounded-lg object-cover';
+    banner.appendChild(img);
+  } else {
+    banner.classList.add('bg-gradient-to-r', 'from-navy', 'to-navy/50');
+  }
+
   const header = document.createElement('div');
   header.className = 'relative w-full -mt-12 mb-4';
 
@@ -79,15 +90,30 @@ export async function ProfilePage(): Promise<HTMLElement> {
   const avatar = document.createElement('div');
   avatar.className =
     'w-24 h-24 rounded-full bg-navy border-4 border-white flex items-center justify-center text-white text-xl font-bold shadow-lg mx-auto';
-  avatar.textContent = userInitials;
+
+  if (profileData?.avatar?.url) {
+    const img = document.createElement('img');
+    img.src = profileData.avatar.url;
+    img.alt = profileData.avatar.alt || `${profileData.name}'s avatar`;
+    img.className = 'w-full h-full rounded-full object-cover';
+    avatar.appendChild(img);
+  } else {
+    avatar.textContent = userInitials;
+  }
 
   const actions = document.createElement('div');
   actions.className = 'flex gap-2';
 
   const editButton = document.createElement('button');
-  editButton.addEventListener('click', () => console.log('Edit Profile'));
   editButton.className = 'button-action';
   editButton.textContent = 'Edit';
+
+  editButton.addEventListener('click', () => {
+    const modal = EditProfileModal(profileData!, (_updatedData) => {
+      window.location.reload();
+    });
+    document.body.appendChild(modal);
+  });
 
   const createListingButton = document.createElement('button');
   createListingButton.addEventListener('click', () =>

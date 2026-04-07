@@ -49,6 +49,12 @@ class Store {
     this.notify();
   }
 
+  public updateUser(profile: Profile) {
+    this.state.user = profile;
+    localStorage.setItem(STORAGE_KEY_PROFILE, JSON.stringify(profile));
+    this.notify();
+  }
+
   public getToken(): string | null {
     return (
       this.state.accessToken || localStorage.getItem(STORAGE_KEY_ACCESS_TOKEN)
