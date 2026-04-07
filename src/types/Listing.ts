@@ -23,3 +23,7 @@ export interface Listing {
     bids: number;
   };
 }
+
+export interface UserBid extends Bid {
+  listing?: Listing;
+}

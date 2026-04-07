@@ -26,6 +26,10 @@
   .button-outline {
     @apply block w-full text-center py-2 px-4 border border-navy text-navy rounded-full font-semibold hover:bg-navy hover:text-white transition-all;
   }
+
+  .button-action {
+    @apply px-5 py-2 bg-cyan-500 text-navy text-xs font-bold rounded-full shadow-md hover:shadow-lg hover:bg-cyan-600 active:scale-95 transition-all duration-200 min-w-20;
+  }
 }
 
 /* :root {
