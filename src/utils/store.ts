@@ -5,6 +5,7 @@ import {
   STORAGE_KEY_PROFILE,
   STORAGE_KEY_API_KEY,
 } from './constants';
+import { fetchProfile } from '../api/Profile';
 
 /**
  * Application State Store.
@@ -55,6 +56,20 @@ class Store {
     this.notify();
   }
 
+  public async fetchAndUpdateProfile(): Promise<void> {
+    const user = this.getUser();
+    if (!user?.name) return;
+
+    try {
+      const response = await fetchProfile(user.name);
+      if (response?.data) {
+        this.updateUser(response.data);
+      }
+    } catch (error) {
+      console.error('Failed to sync Profile credits:', error);
+    }
+  }
+
   public getToken(): string | null {
     return (
       this.state.accessToken || localStorage.getItem(STORAGE_KEY_ACCESS_TOKEN)
@@ -79,7 +94,21 @@ class Store {
   }
 
   public getCredits(): number {
-    return this.state.user?.credits ?? 0;
+    if (this.state.user) {
+      return this.state.user.credits;
+    }
+
+    const savedProfile = localStorage.getItem(STORAGE_KEY_PROFILE);
+    if (savedProfile) {
+      try {
+        const user = JSON.parse(savedProfile);
+        return user.credits ?? 0;
+      } catch {
+        return 0;
+      }
+    }
+
+    return 0;
   }
 
   constructor() {
@@ -112,3 +141,8 @@ class Store {
 }
 
 export const store = new Store();
+if (store.getToken()) {
+  setTimeout(() => {
+    store.fetchAndUpdateProfile();
+  }, 0);
+}

@@ -96,7 +96,14 @@ export async function DetailsPage(): Promise<HTMLElement> {
 
       galleryContainer.appendChild(thumbRow);
     }
-    infoContainer.append(backButton, title, timer, description, biddingSection, history);
+    infoContainer.append(
+      backButton,
+      title,
+      timer,
+      description,
+      biddingSection,
+      history,
+    );
     pageWrapper.appendChild(galleryContainer);
     pageWrapper.appendChild(infoContainer);
     container.replaceChildren(pageWrapper);

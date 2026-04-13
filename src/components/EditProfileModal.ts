@@ -118,7 +118,10 @@ export function EditProfileModal(
       bio: (bioField.input as HTMLTextAreaElement).value,
     };
     try {
-      const response = await updateProfile(updateProfileData);
+      const response = await updateProfile(
+        currentProfile.name,
+        updateProfileData,
+      );
       if (response?.data) {
         const currentUser = store.getUser();
         if (currentUser) {
