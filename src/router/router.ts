@@ -31,13 +31,11 @@ export async function router(): Promise<void> {
   }
 
   if (isLoggedIn && authRoutes.includes(path)) {
-    window.history.pushState({}, '', '/');
+    window.history.pushState({}, '', '/profile');
     return router();
   }
 
-  while (app.firstChild) {
-    app.removeChild(app.firstChild);
-  }
+  app.replaceChildren();
 
   const nav = Navigation();
 

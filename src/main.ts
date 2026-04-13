@@ -14,13 +14,14 @@ window.addEventListener('popstate', () => {
   router();
 });
 
-let previousLoginStatus = store.getToken() !== null;
+let previousUserState = JSON.stringify(store.getUser());
 
 store.subscribe(() => {
-  const currentLoginStatus = store.getToken() !== null;
+  const currentUserState = JSON.stringify(store.getUser());
 
-  if (previousLoginStatus !== currentLoginStatus) {
-    previousLoginStatus = currentLoginStatus;
+  // This catches when login status changes AND when credits change
+  if (previousUserState !== currentUserState) {
+    previousUserState = currentUserState;
     router();
   }
 });

@@ -1,7 +1,7 @@
 import { get } from './Client';
 import type { Profile } from '../types/Profile';
 import type { ApiResponse } from '../types/Api';
-import { store } from '../utils/store';
+
 import type { Listing, Bid } from '../types/Listing';
 import { put } from './Client';
 
@@ -9,19 +9,11 @@ export interface UserBid extends Bid {
   listing?: Listing;
 }
 
-export async function fetchProfile(): Promise<ApiResponse<Profile> | null> {
-  const user = store.getUser();
-
-  if (!user?.name) {
-    throw new Error('User not found');
-  }
-
-  const response = await get<Profile>(`auction/profiles/${user.name}`);
-
-  if (!response?.data) {
-    throw new Error('Failed to fetch profile');
-  }
-  return response;
+export async function fetchProfile(
+  name: string,
+): Promise<ApiResponse<Profile> | null> {
+  if (!name) throw new Error('Name is required');
+  return await get<Profile>(`auction/profiles/${name}`);
 }
 
 export async function fetchProfileListings(
@@ -46,12 +38,14 @@ export async function fetchProfileSearch(query: string): Promise<ApiResponse<Pro
   return get<Profile[]>(`auction/profiles/search?q=${query}`);
 } */
 
-export async function updateProfile(data: {
-  banner?: { url: string; alt?: string };
-  avatar?: { url: string; alt?: string };
-  bio?: string;
-}): Promise<ApiResponse<Profile> | null> {
-  const name = store.getUser()?.name;
+export async function updateProfile(
+  name: string,
+  data: {
+    banner?: { url: string; alt?: string };
+    avatar?: { url: string; alt?: string };
+    bio?: string;
+  },
+): Promise<ApiResponse<Profile> | null> {
   if (!name) return null;
 
   return await put<Profile>(`/auction/profiles/${name}`, data);

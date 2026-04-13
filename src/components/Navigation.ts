@@ -82,8 +82,16 @@ export function Navigation(): HTMLElement {
     credits.className = 'hidden sm:flex flex-col items-end';
 
     const amount = document.createElement('span');
+    amount.id = 'nav-credits-amount';
     amount.className = 'text-xs font-mono font-bold text-navy';
     amount.textContent = String(store.getCredits());
+
+    store.subscribe(() => {
+      const el = document.getElementById('nav-credits-amount');
+      if (el) {
+        el.textContent = String(store.getCredits());
+      }
+    });
 
     const designationLabel = document.createElement('span');
     designationLabel.className =

@@ -25,15 +25,18 @@ export async function ProfilePage(): Promise<HTMLElement> {
   const skeleton = SkeletonProfile();
   profileCard.appendChild(skeleton);
 
-  /*         const user = store.getUser(); */
+  const user = store.getUser();
 
-  let profileData: Profile | null = store.getUser();
+  let profileData: Profile | null = user;
   let fetchFailed = false;
 
   try {
-    const response = await fetchProfile();
-    if (response?.data) {
-      profileData = response.data;
+    if (user?.name) {
+      const response = await fetchProfile(user.name);
+      if (response?.data) {
+        profileData = response.data;
+        store.updateUser(response.data);
+      }
     }
   } catch (error) {
     console.error('Failed to fetch profile:', error);
@@ -133,8 +136,11 @@ export async function ProfilePage(): Promise<HTMLElement> {
   const credits = document.createElement('p');
   credits.className =
     'max-w-max text-xs md:text-sm font-semibold font-mono text-navy uppercase bg-gray-200 p-2 rounded-full mt-2';
-  credits.textContent = `Credits: ${profileData?.credits ?? 0}`;
-
+  if (profileData?.name === store.getUser()?.name) {
+    credits.textContent = `Credits: ${profileData?.credits ?? 0}`;
+  } else {
+    credits.style.display = 'none';
+  }
   const bio = document.createElement('p');
   bio.className = 'text-sm text-gray-600 mt-4 text-center max-w-md mx-auto';
   bio.textContent = profileData?.bio || 'No bio added yet.';

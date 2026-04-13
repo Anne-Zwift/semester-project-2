@@ -1,9 +1,8 @@
-import { get } from '../api/Client';
-import { API_ENDPOINTS } from '../utils/constants';
-import type { Listing } from '../types/Listing';
 import { CountdownTimer } from '../components/CountdownTimer';
 import { BidHistory } from '../components/BidHistory';
 import { router } from '../router/router';
+import { fetchListingId } from '../api/Listings';
+import { BidForm } from '../components/BidForm';
 
 /**Renders the main Details Page structure with img and smaller image variants.
  * @async function.
@@ -27,15 +26,15 @@ export async function DetailsPage(): Promise<HTMLElement> {
   }
 
   try {
-    const response = await get<Listing>(
-      `${API_ENDPOINTS.LISTINGS}/${id}?_seller=true&_bids=true`,
-    );
+    const response = await fetchListingId(id);
     const item = response?.data;
 
     if (!item) {
       container.textContent = 'Listing data is missing.';
       return container;
     }
+
+    const biddingSection = BidForm(item);
 
     const pageWrapper = document.createElement('div');
     pageWrapper.className =
@@ -97,7 +96,14 @@ export async function DetailsPage(): Promise<HTMLElement> {
 
       galleryContainer.appendChild(thumbRow);
     }
-    infoContainer.append(backButton, title, timer, description, history);
+    infoContainer.append(
+      backButton,
+      title,
+      timer,
+      description,
+      biddingSection,
+      history,
+    );
     pageWrapper.appendChild(galleryContainer);
     pageWrapper.appendChild(infoContainer);
     container.replaceChildren(pageWrapper);
