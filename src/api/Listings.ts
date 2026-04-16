@@ -1,7 +1,7 @@
 import type { ApiResponse } from '../types/Api';
 import type { Bid, Listing } from '../types/Listing';
 import { API_ENDPOINTS } from '../utils/constants';
-import { get, post } from './Client';
+import { del, get, post, put } from './Client';
 
 export async function fetchListingId(
   id: string,
@@ -16,4 +16,23 @@ export async function placeBid(
   amount: number,
 ): Promise<ApiResponse<Bid> | null> {
   return post<Bid>(`${API_ENDPOINTS.LISTINGS}/${id}/bids`, { amount });
+}
+
+export async function createListing(
+  data: Partial<Listing>,
+): Promise<ApiResponse<Listing> | null> {
+  return post<Listing>(API_ENDPOINTS.LISTINGS, data);
+}
+
+export async function updateListing(
+  id: string,
+  data: Partial<Listing>,
+): Promise<ApiResponse<Listing> | null> {
+  return put<Listing>(`${API_ENDPOINTS.LISTINGS}/${id}`, data);
+}
+
+export async function deleteListing(
+  id: string,
+): Promise<ApiResponse<void> | null> {
+  return del<void>(`${API_ENDPOINTS.LISTINGS}/${id}`);
 }

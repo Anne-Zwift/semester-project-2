@@ -10,6 +10,9 @@ import { SkeletonProfile } from '../components/SkeletonProfile';
 import type { Listing, UserBid } from '../types/Listing';
 import type { ApiResponse } from '../types/Api';
 import { EditProfileModal } from '../components/EditProfileModal';
+import { ListingForm } from '../components/ListingForm';
+import { router } from '../router/router';
+import { showDeleteConfirmation } from '../components/ConfirmModal';
 
 export async function ProfilePage(): Promise<HTMLElement> {
   const pageContainer = document.createElement('div');
@@ -119,11 +122,15 @@ export async function ProfilePage(): Promise<HTMLElement> {
   });
 
   const createListingButton = document.createElement('button');
-  createListingButton.addEventListener('click', () =>
-    console.log('Create Listing'),
-  );
   createListingButton.className = 'button-action';
   createListingButton.textContent = 'Create';
+
+  createListingButton.addEventListener('click', () => {
+    const modal = ListingForm(undefined, () => {
+      router();
+    });
+    document.body.append(modal);
+  });
 
   const name = document.createElement('h3');
   name.className = 'text-lg font-bold font-sans mt-2 text-navy';
@@ -229,11 +236,61 @@ export async function ProfilePage(): Promise<HTMLElement> {
         'listings',
         () => fetchProfileListings(profileData!.name),
         (item) => {
-          const div = document.createElement('div');
-          div.className =
-            'p-3 border rounded-xl mb-2 text-left font-semibold text-navy';
-          div.textContent = item.title;
-          return div;
+          const container = document.createElement('div');
+          container.className =
+            'p-4 border rounded-xl mb-2 text-left flex flex-col gap-2 group hover:border-navy transition-all bg-white shadow-sm';
+
+          const topRow = document.createElement('div');
+          topRow.className = 'flex justify-between items-center w-full';
+
+          const title = document.createElement('span');
+          title.className =
+            'font-semibold text-navy truncate cursor-pointer hover:underline';
+          title.textContent = `${item.title} ↗`;
+
+          title.addEventListener('click', () => {
+            window.history.pushState(
+              {},
+              '',
+              `/listing/index.html?id=${item.id}`,
+            );
+            router();
+          });
+
+          const actionsWrapper = document.createElement('div');
+          actionsWrapper.className = 'flex gap-2';
+
+          const editBtn = document.createElement('button');
+          editBtn.className = 'button-action';
+          editBtn.textContent = 'Edit';
+          editBtn.addEventListener('click', () => {
+            const modal = ListingForm(item, () => setActiveTab('Listings'));
+            document.body.append(modal);
+          });
+
+          const deleteBtn = document.createElement('button');
+          deleteBtn.className = 'button-action';
+          deleteBtn.textContent = 'Delete';
+          deleteBtn.addEventListener('click', () => {
+            showDeleteConfirmation(item.id, () => setActiveTab('Listings'));
+          });
+          actionsWrapper.append(editBtn, deleteBtn);
+          topRow.append(title, actionsWrapper);
+
+          const tagsWrapper = document.createElement('div');
+          tagsWrapper.className = 'flex flex-wrap gap-1';
+
+          if (item.tags && item.tags.length > 0) {
+            item.tags.forEach((tag) => {
+              const tagBadge = document.createElement('span');
+              tagBadge.className =
+                'text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full font-mono';
+              tagBadge.textContent = `#${tag}`;
+              tagsWrapper.appendChild(tagBadge);
+            });
+          }
+          container.append(topRow, tagsWrapper);
+          return container;
         },
       );
     }

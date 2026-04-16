@@ -1,5 +1,6 @@
 import { router } from '../router/router';
 import { store } from '../utils/store';
+import { ListingForm } from './ListingForm';
 
 /**
  * Creates the main navigation bar
@@ -75,6 +76,19 @@ export function Navigation(): HTMLElement {
   authSection.className = 'flex items-center gap-4';
 
   if (isLoggedIn) {
+    const createListingBtn = document.createElement('button');
+    createListingBtn.textContent = 'Create';
+    createListingBtn.className =
+      'px-3 py-1.5 bg-navy text-white text-xs font-bold rounded-lg hover:bg-navy/90 shadow-sm active:scale-95';
+
+    createListingBtn.addEventListener('click', () => {
+      const modal = ListingForm(undefined, () => {
+        window.history.pushState({}, '', '/profile');
+        router();
+      });
+      document.body.append(modal);
+    });
+
     const profileWrapper = document.createElement('div');
     profileWrapper.className = 'flex items-center gap-3 border-l pl-4 ml-2';
 
@@ -119,6 +133,8 @@ export function Navigation(): HTMLElement {
       router();
     });
     authSection.appendChild(logoutButton);
+    authSection.prepend(createListingBtn);
+    authSection.prepend(profileWrapper);
   }
 
   const mobileMenuBar = document.createElement('button');
