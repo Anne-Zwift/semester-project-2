@@ -25,7 +25,7 @@ export async function fetchProfileListings(
 export async function fetchProfileBids(
   name: string,
 ): Promise<ApiResponse<UserBid[]> | null> {
-  return get<UserBid[]>(`auction/profiles/${name}/bids?_listings=true`);
+  return get<UserBid[]>(`auction/profiles/${name}/bids?_listing=true`);
 }
 
 export async function fetchProfileWins(

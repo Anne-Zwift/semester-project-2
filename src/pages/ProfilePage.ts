@@ -299,19 +299,40 @@ export async function ProfilePage(): Promise<HTMLElement> {
         'bids',
         () => fetchProfileBids(profileData!.name),
         (item) => {
-          const div = document.createElement('div');
-          div.className =
-            'p-3 border rounded-xl mb-2 text-left bg-gray-50 flex justify-between';
+          const container = document.createElement('div');
+          container.className =
+            'p-4 border rounded-xl mb-2 text-left flex justify-between items-center bg-white shadow-sm hover:border-navy transition-all group';
+
+          const infoWrapper = document.createElement('div');
+          infoWrapper.className = 'flex flex-col';
 
           const title = document.createElement('span');
-          title.textContent = item.listing?.title || 'Unknown Listing';
+          title.className =
+            'font-semibold text-navy cursor-pointer hover:underline';
+          title.textContent = `${item.listing?.title || 'Unknown Listing'} ↗`;
+
+          title.addEventListener('click', () => {
+            window.history.pushState(
+              {},
+              '',
+              `/listing/index.html?id=${item.listing?.id}`,
+            );
+            router();
+          });
+
+          const date = document.createElement('span');
+          date.className = 'text-xs text-gray-400 font-mono';
+          date.textContent = new Date(item.created).toLocaleDateString();
+
+          infoWrapper.append(title, date);
 
           const amount = document.createElement('span');
-          amount.className = 'font-mono text-blue-600';
+          amount.className =
+            'font-mono text-sm text-cyan-600 bg-cyan-50 px-3 py-1 rounded-full';
           amount.textContent = `${item.amount}credits`;
 
-          div.append(title, amount);
-          return div;
+          container.append(infoWrapper, amount);
+          return container;
         },
       );
     }
@@ -320,11 +341,46 @@ export async function ProfilePage(): Promise<HTMLElement> {
         'wins',
         () => fetchProfileWins(profileData!.name),
         (item) => {
-          const div = document.createElement('div');
-          div.className =
-            'p-3 border rounded-xl mb-2 text-left bg-green-50 text-green-800 border-green-200';
-          div.textContent = `${item.title}`;
-          return div;
+          const container = document.createElement('div');
+          container.className =
+            'p-4 border border-green-200 rounded-xl mb-2 text-left flex justify-between items-center bg-green-50 shadow-sm hover:border-green-400 transition-all group';
+          container.textContent = `${item.title}`;
+
+          const infoWrapper = document.createElement('div');
+          infoWrapper.className = 'flex flex-col';
+
+          const title = document.createElement('span');
+          title.className =
+            'font-semibold text-navy cursor-pointer hover:underline';
+          title.textContent = `🎉 ${item.title} ↗`;
+
+          title.addEventListener('click', () => {
+            window.history.pushState(
+              {},
+              '',
+              `/listing/index.html?id=${item.id}`,
+            );
+            router();
+          });
+
+          const status = document.createElement('span');
+          status.className = 'text-xs text-green-700 font-medium italic';
+          status.textContent = 'Auction Won';
+
+          infoWrapper.append(title, status);
+
+          const priceWrapper = document.createElement('div');
+          priceWrapper.className = 'flex flex-col items-end';
+
+          const amount = document.createElement('span');
+          amount.className =
+            'font-bold text-green-700 bg-white border border-green-200 px-3 py-1 rounded-full text-sm shadow-sm';
+          amount.textContent = `${item.bids?.sort((a, b) => b.amount - a.amount)[0].amount || 0} credits`;
+
+          priceWrapper.append(amount);
+
+          container.append(infoWrapper, priceWrapper);
+          return container;
         },
       );
     }
