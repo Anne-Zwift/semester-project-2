@@ -41,7 +41,8 @@ export async function LandingPage(): Promise<HTMLElement> {
   container.append(header, gridContainer);
 
   const loadMoreBtn = document.createElement('button');
-  loadMoreBtn.className = 'button-primary mx-auto mt-10 mb-20 hidden';
+  loadMoreBtn.className =
+    'button-primary justify-center w-48 cursor-pointer mx-auto mt-10 mb-20 hidden';
   loadMoreBtn.textContent = 'Load More Auctions';
 
   loadMoreBtn.addEventListener('click', async () => {
