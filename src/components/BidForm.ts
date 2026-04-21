@@ -108,7 +108,7 @@ function renderActiveForm(container: HTMLElement, item: Listing) {
       }
     } catch (error: unknown) {
       const errorMsg = document.createElement('p');
-      errorMsg.className = 'text-error text-center';
+      errorMsg.className = 'text-error text-center error-msg';
       let displayMessage = 'Something went wrong. Your bid was not placed.';
 
       if (error instanceof Error) {

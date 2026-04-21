@@ -31,7 +31,7 @@ export async function fetchProfileBids(
 export async function fetchProfileWins(
   name: string,
 ): Promise<ApiResponse<Listing[]> | null> {
-  return get<Listing[]>(`auction/profiles/${name}/wins`);
+  return get<Listing[]>(`auction/profiles/${name}/wins?_listings=true`);
 }
 /* // search for profiles by name or bio properties
 export async function fetchProfileSearch(query: string): Promise<ApiResponse<Profile[]> | null> {

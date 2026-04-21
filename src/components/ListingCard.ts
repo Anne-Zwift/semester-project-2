@@ -2,10 +2,10 @@ import type { Listing } from '../types/Listing';
 import { formatStaticDate } from '../utils/dateFormatter';
 import { getHighestBid } from '../utils/bidHelpers';
 import { CountdownTimer } from './CountdownTimer';
+import { store } from '../utils/store';
 
 export function ListingCard(item: Listing): HTMLElement {
-  const token = localStorage.getItem('token');
-  const isLoggedIn = Boolean(token);
+  const isLoggedIn = !!store.getToken();
   const card = document.createElement('article');
   card.className =
     'flex flex-col bg-white rounded-xl shadow-md overflow-hidden border-gray-200 hover:shadow-lg transition-shadow';
@@ -105,11 +105,11 @@ export function ListingCard(item: Listing): HTMLElement {
 
   const footer = document.createElement('div');
   footer.className =
-    'p-4 bg-gray-50 border-t border-gray-100 mt-auto text-center';
+    'p-4 bg-gray-50 border-t border-gray-100 mt-auto text-center flex flex-col gap-3';
 
   if (!isLoggedIn) {
     const loginPrompt = document.createElement('p');
-    loginPrompt.className = 'text-xs font-mono text-gray-600 mb-4 px-4';
+    loginPrompt.className = 'text-xs font-mono text-gray-600 mb-4 px-2';
     loginPrompt.textContent = 'You have to be logged in to place bids. Please ';
 
     const registerLink = document.createElement('a');
@@ -131,7 +131,7 @@ export function ListingCard(item: Listing): HTMLElement {
   const viewButton = document.createElement('a');
   viewButton.href = `/listing/index.html?id=${item.id}`;
   viewButton.setAttribute('data-link', '');
-  viewButton.className = 'button-primary';
+  viewButton.className = 'button-primary w-full';
   viewButton.textContent = 'View Details';
 
   body.append(
