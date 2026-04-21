@@ -225,11 +225,15 @@ export async function ProfilePage(): Promise<HTMLElement> {
   }
 
   function setActiveTab(tab: string) {
-    tabsConfig.forEach(({ element }) =>
-      element.classList.remove('border-navy'),
-    );
+    tabsConfig.forEach(({ element }) => {
+      element.classList.remove('border-navy', 'text-navy');
+      element.classList.add('border-transparent', 'text-gray-400');
+    });
     const active = tabsConfig.find((t) => t.name === tab);
-    active?.element.classList.add('border-navy');
+    if (active) {
+      active?.element.classList.remove('border-transparent', 'text-gray-400');
+      active?.element.classList.add('border-navy', 'text-navy');
+    }
 
     if (tab === 'Listings') {
       renderTab<Listing>(
@@ -344,7 +348,6 @@ export async function ProfilePage(): Promise<HTMLElement> {
           const container = document.createElement('div');
           container.className =
             'p-4 border border-green-200 rounded-xl mb-2 text-left flex justify-between items-center bg-green-50 shadow-sm hover:border-green-400 transition-all group';
-          container.textContent = `${item.title}`;
 
           const infoWrapper = document.createElement('div');
           infoWrapper.className = 'flex flex-col';

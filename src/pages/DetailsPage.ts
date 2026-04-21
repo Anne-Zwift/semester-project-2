@@ -110,6 +110,8 @@ export async function DetailsPage(): Promise<HTMLElement> {
   } catch (error) {
     console.error('The API call failed:', error);
     container.textContent = "Oops! We couldn't find that auction.";
+    container.className =
+      'text-center py-10 font-sans text-error font-semibold';
   }
   return container;
 }
