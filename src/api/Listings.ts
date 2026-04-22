@@ -12,7 +12,9 @@ export async function fetchListingId(
 }
 
 // Search for listings by their title or description properties
-export async function fetchListingsSearch(query: string): Promise<ApiResponse<Listing[]> | null> {
+export async function fetchListingsSearch(
+  query: string,
+): Promise<ApiResponse<Listing[]> | null> {
   return get<Listing[]>(`auction/listings/search?q=${query}`);
 }
 
