@@ -23,6 +23,11 @@ export async function router(): Promise<void> {
   if (!app) return;
 
   const path = window.location.pathname;
+
+  const params = new URLSearchParams(window.location.search);
+  const query = params.get('q') || '';
+  const tag = params.get('tag') || '';
+
   const isLoggedIn = Boolean(store.getToken());
 
   if (!isLoggedIn && protectedRoutes.includes(path)) {
@@ -44,10 +49,14 @@ export async function router(): Promise<void> {
 
   app.append(nav, pageRoot);
 
-  const route = path.startsWith('/listing') ? DetailsPage : routes[path];
-
-  if (route) {
-    const page = await route();
+  if (path === '/') {
+    const page = await LandingPage(query, tag);
+    pageRoot.appendChild(page);
+  } else if (path.startsWith('/listing')) {
+    const page = await DetailsPage();
+    pageRoot.appendChild(page);
+  } else if (routes[path]) {
+    const page = await routes[path]();
     pageRoot.appendChild(page);
   } else {
     const errorHeading = document.createElement('h1');

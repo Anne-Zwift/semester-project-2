@@ -95,10 +95,24 @@ export function ListingCard(item: Listing): HTMLElement {
   tagsContainer.className = 'flex flex-wrap gap-2 mt-2';
 
   if (item.tags && item.tags.length > 0) {
+    /*   const hintText = document.createElement('p');
+  hintText.className = 'text-[10px] text-gray-400 font-sans mt-1';
+  hintText.textContent = 'Click a tag to filter';
+  tagsContainer.appendChild(hintText); */
+
     item.tags.forEach((tag) => {
       const tagSpan = document.createElement('span');
-      tagSpan.className = 'text-xs text-gray-500 font-mono';
+      tagSpan.className =
+        'text-xs font-mono px-2 py-0.5 rounded-full border border-gray-200 bg-gray-100 hover:bg-navy hover:text-white hover:border-navy transition-colors cursor-pointer';
       tagSpan.textContent = `#${tag}`;
+
+      tagSpan.addEventListener('click', () => {
+        const params = new URLSearchParams();
+        params.set('tag', tag);
+        window.history.pushState({}, '', `/?${params.toString()}`);
+        window.dispatchEvent(new Event('popstate'));
+      });
+
       tagsContainer.appendChild(tagSpan);
     });
   }

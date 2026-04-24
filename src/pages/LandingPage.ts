@@ -3,6 +3,7 @@ import { API_ENDPOINTS } from '../utils/constants';
 import type { Listing } from '../types/Listing';
 import { ListingCard } from '../components/ListingCard';
 import { SearchBar } from '../components/SearchBar';
+import { fetchListingsByTag, fetchListingsSearch } from '../api/Listings';
 
 /**Renders the main Auction Landing Page structure.
  * Fetches the latest auction listings (12) from the API, manages loading states, and triggers the grid rendering. Targets the '#content-area' element for DOM injection.
@@ -10,14 +11,36 @@ import { SearchBar } from '../components/SearchBar';
  * @returns {Promise<void>} the main container for the page content.
  */
 
-export async function LandingPage(): Promise<HTMLElement> {
+export async function LandingPage(
+  searchQuery: string = '',
+  activeTag: string = '',
+): Promise<HTMLElement> {
   const container = document.createElement('div');
   let allListings: Listing[] = [];
   let currentPage = 1;
 
   const header = document.createElement('header');
   header.className =
-    'flex flex-col md:flex-row justify-between items-center mb-10 gap-4';
+    'flex flex-col md:flex-row justify-between items-center mb-4 gap-4 pb-4 border-b border-gray-100';
+
+  const popularTags = [
+    'jewelry',
+    'vintage',
+    'art',
+    'fashion',
+    'electronics',
+    'animal',
+    'furniture',
+    'chair',
+    'watches',
+  ];
+
+  const tagBar = document.createElement('div');
+  tagBar.className = 'flex gap-2 mt-4 mb-6 overflow-x-auto pb-1 scrollbar-hide';
+
+  popularTags.forEach((tag) => {
+    tagBar.appendChild(createChip(tag, activeTag));
+  });
 
   const title = document.createElement('h1');
   title.className = 'text-2xl font-sans font-bold text-navy';
@@ -26,19 +49,44 @@ export async function LandingPage(): Promise<HTMLElement> {
   const gridContainer = document.createElement('div');
   gridContainer.id = 'listing-grid';
 
-  const searchBar = SearchBar((term) => {
-    const filtered = allListings.filter(
-      (item) =>
-        item.title.toLocaleLowerCase().includes(term) ||
-        item.tags?.some((tag) => tag.toLocaleLowerCase().includes(term)) ||
-        (item.description || '').toLocaleLowerCase().includes(term),
-    );
-    renderListings(filtered, gridContainer, false);
-    loadMoreBtn.classList.add('hidden');
-  });
+  let timeout: number;
+
+  const searchBar = SearchBar(
+    (term) => {
+      clearTimeout(timeout);
+
+      timeout = setTimeout(() => {
+        const trimmed = term.trim();
+        const params = new URLSearchParams(window.location.search);
+
+        if (trimmed.length > 0) {
+          params.set('q', trimmed);
+          params.delete('tag');
+        } else {
+          params.delete('q');
+        }
+
+        window.history.pushState({}, '', `/?${params.toString()}`);
+        window.dispatchEvent(new Event('popstate'));
+      }, 800);
+    },
+    () => {
+      const params = new URLSearchParams(window.location.search);
+      params.delete('tag');
+      window.history.pushState({}, '', `/?${params.toString()}`);
+      window.dispatchEvent(new Event('popstate'));
+    },
+    searchQuery,
+    activeTag,
+  );
 
   header.append(title, searchBar);
-  container.append(header, gridContainer);
+  container.append(header, tagBar, gridContainer);
+
+  if (searchQuery) {
+    const input = searchBar.querySelector('input');
+    input?.focus();
+  }
 
   const loadMoreBtn = document.createElement('button');
   loadMoreBtn.className =
@@ -49,7 +97,22 @@ export async function LandingPage(): Promise<HTMLElement> {
     currentPage++;
     await fetchAndRender(currentPage);
   });
-
+  function createChip(tag: string, active: string): HTMLButtonElement {
+    const chip = document.createElement('button');
+    chip.className = `text-xs font-mono px-3 py-1 rounded-full border transition-colors cursor-pointer ${
+      active === tag
+        ? 'bg-navy text-white border-navy'
+        : 'bg-gray-100 border-gray-200 hover:bg-navy hover:text-white hover:border-navy'
+    }`;
+    chip.textContent = `#${tag}`;
+    chip.addEventListener('click', () => {
+      const params = new URLSearchParams();
+      params.set('tag', tag);
+      window.history.pushState({}, '', `/?${params.toString()}`);
+      window.dispatchEvent(new Event('popstate'));
+    });
+    return chip;
+  }
   async function fetchAndRender(page: number) {
     if (page === 1) {
       const loader = document.createElement('p');
@@ -59,18 +122,26 @@ export async function LandingPage(): Promise<HTMLElement> {
     }
 
     try {
-      const response = await get<Listing[]>(
-        `${API_ENDPOINTS.LISTINGS}?limit=12&page=${page}&sort=endsAt&sortOrder=asc&_active=true&_seller=true&_bids=true`,
-      );
+      let response;
+
+      if (searchQuery.trim()) {
+        response = await fetchListingsSearch(searchQuery);
+        loadMoreBtn.classList.add('hidden');
+      } else if (activeTag.trim()) {
+        response = await fetchListingsByTag(activeTag);
+        loadMoreBtn.classList.add('hidden');
+      } else {
+        response = await get<Listing[]>(
+          `${API_ENDPOINTS.LISTINGS}?limit=12&page=${page}&sort=endsAt&sortOrder=asc&_active=true&_seller=true&_bids=true`,
+        );
+      }
 
       const newListings = response?.data || [];
 
-      if (newListings.length === 12) {
-        loadMoreBtn.classList.remove('hidden');
-        loadMoreBtn.classList.add('flex');
+      if (!searchQuery && newListings.length === 12) {
+        loadMoreBtn.classList.replace('hidden', 'flex');
       } else {
-        loadMoreBtn.classList.add('hidden');
-        loadMoreBtn.classList.remove('flex');
+        loadMoreBtn.classList.replace('flex', 'hidden');
       }
 
       if (page === 1) {
@@ -80,6 +151,16 @@ export async function LandingPage(): Promise<HTMLElement> {
         allListings = [...allListings, ...newListings];
         renderListings(newListings, gridContainer, true);
       }
+
+      const seenTags = new Set(popularTags);
+      allListings.forEach((listing) => {
+        listing.tags?.forEach((tag) => {
+          if (!seenTags.has(tag)) {
+            seenTags.add(tag);
+            tagBar.appendChild(createChip(tag, activeTag));
+          }
+        });
+      });
     } catch (error) {
       console.error(error);
       const errorMsg = document.createElement('p');
@@ -91,7 +172,7 @@ export async function LandingPage(): Promise<HTMLElement> {
     }
   }
 
-  fetchAndRender(currentPage);
+  await fetchAndRender(currentPage);
   container.append(loadMoreBtn);
   return container;
 }
@@ -109,10 +190,25 @@ function renderListings(
   }
 
   if (listings.length === 0 && !append) {
+    const emptyContainer = document.createElement('div');
+    emptyContainer.className =
+      'col-span-full flex flex-col items-center py-20 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200';
+
     const emptyMsg = document.createElement('p');
-    emptyMsg.className = 'text-gray-500 text-center py-10';
-    emptyMsg.textContent = 'No auctions found.';
-    gridTarget.appendChild(emptyMsg);
+    emptyMsg.className = 'text-gray-500 font-sans mb-4';
+    emptyMsg.textContent = 'No active auctions found matching your search.';
+
+    const clearBtn = document.createElement('button');
+    clearBtn.className = 'text-navy font-bold hover:underline cursor-pointer';
+    clearBtn.textContent = '← Clear search and view all auctions';
+
+    clearBtn.addEventListener('click', () => {
+      window.history.pushState({}, '', '/');
+      import('../router/router').then((m) => m.router());
+    });
+
+    emptyContainer.append(emptyMsg, clearBtn);
+    gridTarget.appendChild(emptyContainer);
     return;
   }
 
