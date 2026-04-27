@@ -13,10 +13,11 @@ export function SearchBar(
   activeTag: string = '',
 ): HTMLDivElement {
   const wrapper = document.createElement('div');
-  wrapper.className = 'flex flex-col items-end gap-2 w-full max-w-md';
+  wrapper.className =
+    'flex flex-col items-end gap-2 w-full max-w-md px-4 sm:px-6 mx-auto';
 
   const container = document.createElement('div');
-  container.className = 'relative w-full group';
+  container.className = 'relative w-full group md:mt-10';
 
   const icon = document.createElement('span');
   icon.className =
@@ -31,7 +32,7 @@ export function SearchBar(
     ? `Browsing #${activeTag}...`
     : 'Search auctions...';
   input.disabled = !!activeTag;
-  input.className = `${isExpanded ? 'w-full' : 'w-full md:w-48 md:focus:w-full'} pl-10 pr-4 py-2 rounded-full border border-gray-200 bg-gray-50 outline-none transition-all duration-500 ease-in-out focus:ring-2 focus:ring-navy focus:bg-white font-sans text-sm disabled:opacity-50 disabled:cursor-not-allowed`;
+  input.className = `${isExpanded ? 'w-full' : 'w-full md:w-48 md:focus:w-full'} pl-10 pr-4 py-3 rounded-full border border-gray-200 bg-gray-50 outline-none transition-all duration-500 ease-in-out focus:ring-2 focus:ring-navy focus:bg-white font-sans text-sm disabled:opacity-50 disabled:cursor-not-allowed`;
 
   if (initialValue) {
     input.addEventListener('focus', () => {

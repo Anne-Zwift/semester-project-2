@@ -36,18 +36,20 @@ export async function LandingPage(
   ];
 
   const tagBar = document.createElement('div');
-  tagBar.className = 'flex gap-2 mt-4 mb-6 overflow-x-auto pb-1 scrollbar-hide';
+  tagBar.className =
+    'flex gap-2 mt-4 mb-6 mx-4 overflow-x-auto pb-1 scrollbar-hide';
 
   popularTags.forEach((tag) => {
     tagBar.appendChild(createChip(tag, activeTag));
   });
 
   const title = document.createElement('h1');
-  title.className = 'text-2xl font-sans font-bold text-navy';
+  title.className = 'text-2xl font-sans font-bold text-navy mt-10 md: ml-10';
   title.textContent = 'Active Auctions';
 
   const gridContainer = document.createElement('div');
   gridContainer.id = 'listing-grid';
+  gridContainer.className = 'mx-2';
 
   let timeout: number;
 
@@ -99,7 +101,7 @@ export async function LandingPage(
   });
   function createChip(tag: string, active: string): HTMLButtonElement {
     const chip = document.createElement('button');
-    chip.className = `text-xs font-mono px-3 py-1 rounded-full border transition-colors cursor-pointer ${
+    chip.className = `text-xs font-mono px-3 py-1 my-2 rounded-full border transition-colors cursor-pointer ${
       active === tag
         ? 'bg-navy text-white border-navy'
         : 'bg-gray-100 border-gray-200 hover:bg-navy hover:text-white hover:border-navy'
