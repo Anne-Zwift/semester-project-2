@@ -11,6 +11,53 @@ export async function fetchListingId(
   );
 }
 
+// Search by title and description, a mix of ended and active
+export async function fetchListingsSearch(
+  query: string,
+  activeOnly = true,
+): Promise<ApiResponse<Listing[]> | null> {
+  const params = new URLSearchParams({
+    q: query,
+    _seller: 'true',
+    _bids: 'true',
+    ...(activeOnly && { _active: 'true' }),
+  });
+
+  const response = await get<Listing[]>(`auction/listings/search?${params}`);
+
+  if (!response?.data) return response;
+
+  const now = new Date().getTime();
+  response.data = response.data.filter(
+    (item) => new Date(item.endsAt).getTime() > now,
+  );
+
+  return response;
+}
+
+// Filter by tag and optionally active
+export async function fetchListingsByTag(
+  tag: string,
+  activeOnly = true,
+): Promise<ApiResponse<Listing[]> | null> {
+  const params = new URLSearchParams({
+    _tag: tag,
+    _seller: 'true',
+    _bids: 'true',
+    ...(activeOnly && { _active: 'true' }),
+  });
+  const response = await get<Listing[]>(`auction/listings?${params}`);
+
+  if (!response?.data) return response;
+
+  const now = new Date().getTime();
+  response.data = response.data.filter(
+    (item) => new Date(item.endsAt).getTime() > now,
+  );
+
+  return response;
+}
+
 export async function placeBid(
   id: string,
   amount: number,
