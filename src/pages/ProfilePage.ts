@@ -13,6 +13,7 @@ import { EditProfileModal } from '../components/EditProfileModal';
 import { ListingForm } from '../components/ListingForm';
 import { router } from '../router/router';
 import { showDeleteConfirmation } from '../components/ConfirmModal';
+import { showToast } from '../components/Toast';
 
 export async function ProfilePage(): Promise<HTMLElement> {
   const pageContainer = document.createElement('div');
@@ -41,8 +42,8 @@ export async function ProfilePage(): Promise<HTMLElement> {
         store.updateUser(response.data);
       }
     }
-  } catch (error) {
-    console.error('Failed to fetch profile:', error);
+  } catch (_error) {
+    showToast('Failed to fetch profile. Please try again.', 'error');
     fetchFailed = true;
   }
 
@@ -116,7 +117,7 @@ export async function ProfilePage(): Promise<HTMLElement> {
 
   editButton.addEventListener('click', () => {
     const modal = EditProfileModal(profileData!, (_updatedData) => {
-      window.location.reload();
+      setTimeout(() => window.location.reload(), 1500);
     });
     document.body.appendChild(modal);
   });
@@ -220,6 +221,7 @@ export async function ProfilePage(): Promise<HTMLElement> {
         tabContent.appendChild(element);
       });
     } catch {
+      showToast(`Failed to load ${label}.`, 'error');
       tabContent.textContent = `Failed to load ${label}.`;
     }
   }

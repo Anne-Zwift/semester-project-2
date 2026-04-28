@@ -4,6 +4,7 @@ import type { Listing } from '../types/Listing';
 import { ListingCard } from '../components/ListingCard';
 import { SearchBar } from '../components/SearchBar';
 import { fetchListingsByTag, fetchListingsSearch } from '../api/Listings';
+import { showToast } from '../components/Toast';
 
 /**Renders the main Auction Landing Page structure.
  * Fetches the latest auction listings (12) from the API, manages loading states, and triggers the grid rendering. Targets the '#content-area' element for DOM injection.
@@ -172,13 +173,9 @@ export async function LandingPage(
           }
         });
       });
-    } catch (error) {
-      console.error(error);
-      const errorMsg = document.createElement('p');
-      errorMsg.className =
-        'mx-auto text-center justify-center items-center w-1/2 text-white py-4 px-4 bg-error rounded-lg';
-      errorMsg.textContent = 'Failed to load auctions. Please try again later.';
-      gridContainer.replaceChildren(errorMsg);
+    } catch (_error) {
+      showToast('Failed to load auctions. Please try again later', 'error');
+      gridContainer.replaceChildren();
       loadMoreBtn.classList.add('hidden');
     }
   }

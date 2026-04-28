@@ -1,4 +1,5 @@
 import { deleteListing } from '../api/Listings';
+import { showToast } from './Toast';
 
 export function showDeleteConfirmation(
   ListingId: string,
@@ -40,9 +41,10 @@ export function showDeleteConfirmation(
     try {
       await deleteListing(ListingId);
       overlay.remove();
+      showToast('Listing deleted successfully.', 'success');
       onDeleted();
-    } catch (error) {
-      console.error('Delete failed', error);
+    } catch (_error) {
+      showToast('Failed to delete listing. Please try again.', 'error');
       confirmBtn.disabled = false;
       confirmBtn.textContent = 'Delete';
     }

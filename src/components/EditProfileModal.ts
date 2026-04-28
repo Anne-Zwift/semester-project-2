@@ -1,6 +1,7 @@
 import type { Profile } from '../types/Profile';
 import { store } from '../utils/store';
 import { updateProfile } from '../api/Profile';
+import { showToast } from './Toast';
 
 export function EditProfileModal(
   currentProfile: Profile,
@@ -127,12 +128,12 @@ export function EditProfileModal(
         if (currentUser) {
           store.updateUser({ ...currentUser, ...response?.data });
         }
+        showToast('Profile was successfully updated', 'success');
         onSuccess(response.data);
         overlay.remove();
       }
-    } catch (error) {
-      console.error('Update failed:', error);
-      errorMsg.classList.remove('hidden');
+    } catch (_error) {
+      showToast('Update failed. Please try again.', 'error');
       saveBtn.disabled = false;
       saveBtn.textContent = 'Save Changes';
     }

@@ -1,6 +1,7 @@
 import type { Listing } from '../types/Listing';
 import { showDeleteConfirmation } from './ConfirmModal';
 import { createListing, updateListing } from '../api/Listings';
+import { showToast } from './Toast';
 
 export function ListingForm(
   existingListing?: Listing,
@@ -193,8 +194,13 @@ export function ListingForm(
         if (onSuccess) onSuccess();
         overlay.remove();
       }
-    } catch (error) {
-      console.error('Failed to save listing:', error);
+    } catch (_error) {
+      showToast(
+        existingListing
+          ? 'Failed to save changes. Please try again.'
+          : 'Failed to create listing. Please try again.',
+        'error',
+      );
     } finally {
       submitButton.disabled = false;
       submitButton.textContent = originalText;

@@ -3,6 +3,7 @@ import { BidHistory } from '../components/BidHistory';
 import { router } from '../router/router';
 import { fetchListingId } from '../api/Listings';
 import { BidForm } from '../components/BidForm';
+import { showToast } from '../components/Toast';
 
 /**Renders the main Details Page structure with img and smaller image variants.
  * @async function.
@@ -107,11 +108,9 @@ export async function DetailsPage(): Promise<HTMLElement> {
     pageWrapper.appendChild(galleryContainer);
     pageWrapper.appendChild(infoContainer);
     container.replaceChildren(pageWrapper);
-  } catch (error) {
-    console.error('The API call failed:', error);
+  } catch (_error) {
+    showToast("Oops! We couldn't find that auction.", 'error');
     container.textContent = "Oops! We couldn't find that auction.";
-    container.className =
-      'text-center py-10 font-sans text-error font-semibold';
   }
   return container;
 }
