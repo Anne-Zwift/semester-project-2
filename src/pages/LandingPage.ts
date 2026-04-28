@@ -4,6 +4,7 @@ import type { Listing } from '../types/Listing';
 import { ListingCard } from '../components/ListingCard';
 import { SearchBar } from '../components/SearchBar';
 import { fetchListingsByTag, fetchListingsSearch } from '../api/Listings';
+import { showToast } from '../components/Toast';
 
 /**Renders the main Auction Landing Page structure.
  * Fetches the latest auction listings (12) from the API, manages loading states, and triggers the grid rendering. Targets the '#content-area' element for DOM injection.
@@ -148,7 +149,16 @@ export async function LandingPage(
 
       if (page === 1) {
         allListings = newListings;
-        renderListings(allListings, gridContainer, false);
+        renderListings(
+          allListings,
+          gridContainer,
+          false,
+          searchQuery
+            ? { type: 'search', query: searchQuery }
+            : activeTag
+              ? { type: 'tag', tag: activeTag }
+              : undefined,
+        );
       } else {
         allListings = [...allListings, ...newListings];
         renderListings(newListings, gridContainer, true);
@@ -163,13 +173,9 @@ export async function LandingPage(
           }
         });
       });
-    } catch (error) {
-      console.error(error);
-      const errorMsg = document.createElement('p');
-      errorMsg.className =
-        'mx-auto text-center justify-center items-center w-1/2 text-white py-4 px-4 bg-error rounded-lg';
-      errorMsg.textContent = 'Failed to load auctions. Please try again later.';
-      gridContainer.replaceChildren(errorMsg);
+    } catch (_error) {
+      showToast('Failed to load auctions. Please try again later', 'error');
+      gridContainer.replaceChildren();
       loadMoreBtn.classList.add('hidden');
     }
   }
@@ -183,6 +189,7 @@ function renderListings(
   listings: Listing[],
   gridTarget: HTMLElement,
   append: boolean,
+  context?: { type: 'search'; query: string } | { type: 'tag'; tag: string },
 ) {
   if (!append) {
     gridTarget.replaceChildren();
@@ -198,7 +205,13 @@ function renderListings(
 
     const emptyMsg = document.createElement('p');
     emptyMsg.className = 'text-gray-500 font-sans mb-4';
-    emptyMsg.textContent = 'No active auctions found matching your search.';
+    if (context?.type === 'search') {
+      emptyMsg.textContent = `No results found for '${context.query}'`;
+    } else if (context?.type === 'tag') {
+      emptyMsg.textContent = `No listing found for #${context.tag}`;
+    } else {
+      emptyMsg.textContent = 'No active auctions available.';
+    }
 
     const clearBtn = document.createElement('button');
     clearBtn.className = 'text-navy font-bold hover:underline cursor-pointer';
