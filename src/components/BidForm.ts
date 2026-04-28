@@ -3,6 +3,7 @@ import { getHighestBid } from '../utils/bidHelpers';
 import { store } from '../utils/store';
 import { placeBid } from '../api/Listings';
 import { router } from '../router/router';
+import { showToast } from './Toast';
 
 /**
  * Creates and manages the Bidding section for a listing.
@@ -93,32 +94,20 @@ function renderActiveForm(container: HTMLElement, item: Listing) {
     e.preventDefault();
     const amount = Number(input.value);
 
-    const existingError = form.querySelector('.error-msg');
-    if (existingError) existingError.remove();
-
     try {
       const response = await placeBid(item.id, amount);
 
       if (response?.data) {
-        const successMsg = document.createElement('p');
-        successMsg.className = 'text-success text-center';
-        successMsg.textContent = 'Your bid was successfully placed.';
         await store.fetchAndUpdateProfile();
+        showToast('Your bid was successfully placed!', 'success');
         router();
       }
     } catch (error: unknown) {
-      const errorMsg = document.createElement('p');
-      errorMsg.className = 'text-error text-center error-msg';
-      let displayMessage = 'Something went wrong. Your bid was not placed.';
-
-      if (error instanceof Error) {
-        displayMessage = error.message;
-      }
-
-      errorMsg.textContent = displayMessage;
-
-      form.appendChild(errorMsg);
-      console.warn('Bid failed:', displayMessage);
+      const displayMessage =
+        error instanceof Error
+          ? error.message
+          : 'Something went wrong. Your bid was not placed.';
+      showToast(displayMessage, 'error');
     }
   });
   container.appendChild(form);
