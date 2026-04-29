@@ -5,6 +5,7 @@ import type { Profile } from '../types/Profile';
 import { validateLogin } from '../utils/validation';
 import { store } from '../utils/store';
 import { BASE_URL } from '../utils/constants';
+import { Spinner } from '../components/Spinner';
 
 export async function LoginPage(): Promise<HTMLElement> {
   const pageContainer = document.createElement('div');
@@ -92,6 +93,10 @@ export async function LoginPage(): Promise<HTMLElement> {
   loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
+    submitButton.disabled = true;
+    submitButton.textContent = '';
+    submitButton.appendChild(Spinner());
+
     const formData: LoginPayLoad = {
       email: emailInput.value.trim(),
       password: passwordInput.value,
@@ -105,6 +110,8 @@ export async function LoginPage(): Promise<HTMLElement> {
     if (validationError) {
       errorMessage.textContent = validationError;
       errorMessage.classList.remove('hidden');
+      submitButton.disabled = false;
+      submitButton.textContent = 'Log In';
       return;
     }
 
@@ -143,6 +150,9 @@ export async function LoginPage(): Promise<HTMLElement> {
       errorMessage.textContent =
         error instanceof Error ? error.message : 'Log in failed';
       errorMessage.classList.remove('hidden');
+    } finally {
+      submitButton.disabled = false;
+      submitButton.textContent = 'log In';
     }
   });
 

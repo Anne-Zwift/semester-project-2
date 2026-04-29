@@ -3,6 +3,7 @@ import { router } from '../router/router';
 import type { RegisterPayload } from '../types/Auth';
 import type { Profile } from '../types/Profile';
 import { validateRegister } from '../utils/validation';
+import { Spinner } from '../components/Spinner';
 
 export async function RegisterPage(): Promise<HTMLElement> {
   const pageContainer = document.createElement('div');
@@ -110,6 +111,10 @@ export async function RegisterPage(): Promise<HTMLElement> {
   registerForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
+    submitButton.disabled = true;
+    submitButton.textContent = '';
+    submitButton.appendChild(Spinner());
+
     const formData: RegisterPayload = {
       name: nameInput.value.trim(),
       email: emailInput.value.trim(),
@@ -124,6 +129,8 @@ export async function RegisterPage(): Promise<HTMLElement> {
     if (validationError) {
       errorMessage.textContent = validationError;
       errorMessage.classList.remove('hidden');
+      submitButton.disabled = false;
+      submitButton.textContent = 'Register';
       return;
     }
 
@@ -135,6 +142,9 @@ export async function RegisterPage(): Promise<HTMLElement> {
       errorMessage.textContent =
         error instanceof Error ? error.message : 'Registration failed';
       errorMessage.classList.remove('hidden');
+    } finally {
+      submitButton.disabled = false;
+      submitButton.textContent = 'Register';
     }
   });
   return pageContainer;

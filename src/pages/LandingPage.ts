@@ -5,6 +5,7 @@ import { ListingCard } from '../components/ListingCard';
 import { SearchBar } from '../components/SearchBar';
 import { fetchListingsByTag, fetchListingsSearch } from '../api/Listings';
 import { showToast } from '../components/Toast';
+import { SkeletonCard } from '../components/SkeletonCard';
 
 /**Renders the main Auction Landing Page structure.
  * Fetches the latest auction listings (12) from the API, manages loading states, and triggers the grid rendering. Targets the '#content-area' element for DOM injection.
@@ -118,10 +119,14 @@ export async function LandingPage(
   }
   async function fetchAndRender(page: number) {
     if (page === 1) {
-      const loader = document.createElement('p');
-      loader.textContent = 'Loading auctions...';
-      loader.className = 'text-center py-10 font-sans loader-text';
-      gridContainer.appendChild(loader);
+      const skeletonGrid = document.createElement('div');
+      skeletonGrid.className =
+        'skeleton-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-6';
+
+      for (let i = 0; i < 12; i++) {
+        skeletonGrid.appendChild(SkeletonCard());
+      }
+      gridContainer.appendChild(skeletonGrid);
     }
 
     try {
@@ -180,7 +185,7 @@ export async function LandingPage(
     }
   }
 
-  await fetchAndRender(currentPage);
+  fetchAndRender(currentPage);
   container.append(loadMoreBtn);
   return container;
 }
