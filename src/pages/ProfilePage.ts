@@ -14,6 +14,7 @@ import { ListingForm } from '../components/ListingForm';
 import { router } from '../router/router';
 import { showDeleteConfirmation } from '../components/ConfirmModal';
 import { showToast } from '../components/Toast';
+import { Spinner } from '../components/Spinner';
 
 export async function ProfilePage(): Promise<HTMLElement> {
   const pageContainer = document.createElement('div');
@@ -202,10 +203,15 @@ export async function ProfilePage(): Promise<HTMLElement> {
     ) {
       tabContent.replaceChildren();
 
-      const loading = document.createElement('p');
-      loading.className = 'text-gray-400 italic py-4';
-      loading.textContent = `Loading ${label}...`;
-      tabContent.appendChild(loading);
+      const spinnerWrapper = document.createElement('div');
+      spinnerWrapper.className = 'py-8 flex justify-center';
+
+      const spinner = Spinner();
+      spinner.className =
+        'w-6 h-6 border-2 border-gray-200 border-t-navy rounded-full animate-spin';
+
+      spinnerWrapper.appendChild(spinner);
+      tabContent.appendChild(spinnerWrapper);
 
       try {
         const result = await fetchFn();
