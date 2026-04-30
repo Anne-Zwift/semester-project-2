@@ -33,10 +33,15 @@ export async function fetchProfileWins(
 ): Promise<ApiResponse<Listing[]> | null> {
   return get<Listing[]>(`auction/profiles/${name}/wins?_listings=true`);
 }
-/* // search for profiles by name or bio properties
-export async function fetchProfileSearch(query: string): Promise<ApiResponse<Profile[]> | null> {
-  return get<Profile[]>(`auction/profiles/search?q=${query}`);
-} */
+
+// Search for profiles by name or bio properties
+export async function fetchProfileSearch(
+  query: string,
+): Promise<ApiResponse<Profile[]> | null> {
+  if (!query.trim()) return null;
+  const params = new URLSearchParams({ q: query });
+  return get<Profile[]>(`auction/profiles/search?${params}`);
+}
 
 export async function updateProfile(
   name: string,
