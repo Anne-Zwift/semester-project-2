@@ -1,6 +1,6 @@
 import type { Profile } from '../types/Profile';
 
-export function profileCard(profile: Profile): HTMLElement {
+export function ProfileCard(profile: Profile): HTMLElement {
   const card = document.createElement('article');
   card.className =
     'bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden';
@@ -42,7 +42,10 @@ export function profileCard(profile: Profile): HTMLElement {
   const viewButton = document.createElement('button');
   viewButton.className = 'button-primary w-full mt-2';
   viewButton.textContent = 'View Profile';
-  viewButton.addEventListener('click', () => {});
+  viewButton.addEventListener('click', () => {
+    window.history.pushState({}, '', `/search/profile?name=${profile.name}`);
+    window.dispatchEvent(new Event('popstate'));
+  });
   body.append(avatar, name, bio, viewButton);
   card.append(banner, body);
   return card;
