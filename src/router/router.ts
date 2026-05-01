@@ -5,8 +5,9 @@ import { LoginPage } from '../pages/LoginPage';
 import { Navigation } from '../components/Navigation';
 import { store } from '../utils/store';
 import { ProfilePage } from '../pages/ProfilePage';
+import { SearchPage } from '../pages/SearchPage';
 
-const protectedRoutes = ['/profile'];
+const protectedRoutes = ['/profile', '/search'];
 const authRoutes = ['/login', '/register'];
 
 const routes: Record<string, () => Promise<HTMLElement>> = {
@@ -15,6 +16,7 @@ const routes: Record<string, () => Promise<HTMLElement>> = {
   '/register': RegisterPage,
   '/login': LoginPage,
   '/profile': ProfilePage,
+  '/search': SearchPage,
 };
 
 export async function router(): Promise<void> {
