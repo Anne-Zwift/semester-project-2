@@ -43,7 +43,7 @@ export function ProfileCard(profile: Profile): HTMLElement {
   viewButton.className = 'button-primary w-full mt-2';
   viewButton.textContent = 'View Profile';
   viewButton.addEventListener('click', () => {
-    window.history.pushState({}, '', `/search/profile?name=${profile.name}`);
+    window.history.pushState({}, '', `/profile?name=${profile.name}`);
     window.dispatchEvent(new Event('popstate'));
   });
   body.append(avatar, name, bio, viewButton);

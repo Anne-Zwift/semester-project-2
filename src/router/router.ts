@@ -29,6 +29,7 @@ export async function router(): Promise<void> {
   const params = new URLSearchParams(window.location.search);
   const query = params.get('q') || '';
   const tag = params.get('tag') || '';
+  const profileName = params.get('name') ?? '';
 
   const isLoggedIn = Boolean(store.getToken());
 
@@ -53,6 +54,9 @@ export async function router(): Promise<void> {
 
   if (path === '/') {
     const page = await LandingPage(query, tag);
+    pageRoot.appendChild(page);
+  } else if (path === '/profile') {
+    const page = await ProfilePage(profileName);
     pageRoot.appendChild(page);
   } else if (path.startsWith('/listing')) {
     const page = await DetailsPage();

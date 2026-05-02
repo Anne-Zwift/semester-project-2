@@ -42,7 +42,7 @@ export async function SearchPage(): Promise<HTMLElement> {
 
         window.history.pushState({}, '', `/search?${params.toString()}`);
         window.dispatchEvent(new Event('popstate'));
-      }, 400);
+      }, 800);
     },
     () => {
       const params = new URLSearchParams(window.location.search);
