@@ -11,6 +11,7 @@ export function SearchBar(
   onTagClear: () => void,
   initialValue: string = '',
   activeTag: string = '',
+  placeholder: string = 'Search auctions...',
 ): HTMLDivElement {
   const wrapper = document.createElement('div');
   wrapper.className =
@@ -19,18 +20,17 @@ export function SearchBar(
   const container = document.createElement('div');
   container.className = 'relative w-full group md:mt-10';
 
-  const icon = document.createElement('span');
+  const icon = document.createElement('img');
+  icon.src = '/assets/search.svg';
   icon.className =
-    'absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-navy transition-colors text-sm';
-  icon.textContent = '🔍';
+    'absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 opacity-50 group-focus-within:opacity-100 transition-opacity';
+  icon.alt = 'magnifying glass for search';
 
   const input = document.createElement('input');
   const isExpanded = !!initialValue || !!activeTag;
   input.value = initialValue;
   input.type = 'text';
-  input.placeholder = activeTag
-    ? `Browsing #${activeTag}...`
-    : 'Search auctions...';
+  input.placeholder = activeTag ? `Browsing #${activeTag}...` : placeholder;
   input.disabled = !!activeTag;
   input.className = `${isExpanded ? 'w-full' : 'w-full md:w-48 md:focus:w-full'} pl-10 pr-4 py-3 rounded-full border border-gray-200 bg-gray-50 outline-none transition-all duration-500 ease-in-out focus:ring-2 focus:ring-navy focus:bg-white font-sans text-sm disabled:opacity-50 disabled:cursor-not-allowed`;
 

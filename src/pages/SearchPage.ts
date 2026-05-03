@@ -11,18 +11,29 @@ function getSearchQuery(): string {
 
 export async function SearchPage(): Promise<HTMLElement> {
   const container = document.createElement('div');
+  container.className = 'w-full max-w-6xl mx-auto px-4 md:px-8 py-12';
 
   const header = document.createElement('header');
   header.className =
-    'flex flex-col md:flex-row justify-between items-center mb-4 gap-4 pb-4 border-b border-gray-100';
+    'max-w-4xl mx-auto flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12';
+
+  const titleWrapper = document.createElement('div');
+  titleWrapper.className = 'flex flex-col gap-2';
 
   const title = document.createElement('h1');
-  title.className = 'text-2xl font-sans font-bold text-navy';
+  title.className =
+    'text-3xl md:text-4xl font-sans font-extrabold text-navy tracking-tight';
   title.textContent = 'Search Profiles';
 
-  const gridContainer = document.createElement('div');
-  gridContainer.id = 'listing-grid';
-  gridContainer.className = 'mx-2';
+  const text = document.createElement('p');
+  text.className = 'text-gray-500 text-lg max-w-md';
+  text.textContent =
+    'Discover and connect with other auctioneers in the community.';
+
+  titleWrapper.append(title, text);
+
+  const searchWrapper = document.createElement('div');
+  searchWrapper.className = 'w-full max-w-md md:w-80';
 
   let timeout: number;
 
@@ -50,9 +61,18 @@ export async function SearchPage(): Promise<HTMLElement> {
       window.dispatchEvent(new Event('popstate'));
     },
     getSearchQuery(),
+    '',
+    'Search profiles...',
   );
 
-  header.append(title, searchBar);
+  searchWrapper.append(searchBar);
+
+  header.append(titleWrapper, searchWrapper);
+
+  const gridContainer = document.createElement('div');
+  gridContainer.id = 'listing-grid';
+  gridContainer.className = 'mt-12';
+
   container.append(header, gridContainer);
 
   fetchAndRender();
@@ -81,15 +101,38 @@ export async function SearchPage(): Promise<HTMLElement> {
       gridContainer.replaceChildren();
 
       if (profiles.length === 0) {
+        const emptyWrapper = document.createElement('div');
+        emptyWrapper.className = 'flex flex-col items-center gap-4 py-20';
         const emptyMsg = document.createElement('p');
-        emptyMsg.className = 'text-gray-500 font-sans text-center py-20';
+        emptyMsg.className =
+          'col-span-full text-gray-500 font-sans text-center py-12';
         emptyMsg.textContent = searchQuery
-          ? `No profiles found for "${searchQuery}"`
+          ? `We couldn't find any profiles matching "${searchQuery}". Try a different name or keyword.`
           : 'Search for a profile by name or bio.';
-        gridContainer.appendChild(emptyMsg);
+
+        emptyWrapper.append(emptyMsg);
+
+        if (searchQuery) {
+          const clearBtn = document.createElement('button');
+          clearBtn.className =
+            'text-navy font-bold hover:underline cursor-pointer';
+          clearBtn.textContent = '← Clear search and view all profiles';
+
+          clearBtn.addEventListener('click', () => {
+            window.history.pushState({}, '', '/search');
+            const searchInput = document.querySelector(
+              'input[type="text"]',
+            ) as HTMLInputElement;
+            if (searchInput) {
+              searchInput.value = '';
+            }
+            import('../router/router').then((m) => m.router());
+          });
+          emptyWrapper.append(clearBtn);
+        }
+        gridContainer.appendChild(emptyWrapper);
         return;
       }
-
       const grid = document.createElement('div');
       grid.className =
         'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6';
