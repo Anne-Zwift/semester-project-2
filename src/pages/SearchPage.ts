@@ -55,6 +55,10 @@ export async function SearchPage(): Promise<HTMLElement> {
   header.append(title, searchBar);
   container.append(header, gridContainer);
 
+  fetchAndRender();
+
+  return container;
+
   async function fetchAndRender() {
     const searchQuery = getSearchQuery();
 
@@ -63,8 +67,13 @@ export async function SearchPage(): Promise<HTMLElement> {
     const skeletonGrid = document.createElement('div');
     skeletonGrid.className =
       'skeleton-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6';
-    gridContainer.appendChild(skeletonGrid);
 
+    for (let i = 0; i < 6; i++) {
+      const bone = document.createElement('div');
+      bone.className = 'w-full h-48 bg-gray-200 animate-pulse rounded-xl';
+      skeletonGrid.appendChild(bone);
+    }
+    gridContainer.appendChild(skeletonGrid);
     try {
       const response = await fetchProfileSearch(searchQuery);
       const profiles: Profile[] = response?.data || [];
@@ -98,6 +107,4 @@ export async function SearchPage(): Promise<HTMLElement> {
       gridContainer.appendChild(errorMsg);
     }
   }
-  fetchAndRender();
-  return container;
 }
