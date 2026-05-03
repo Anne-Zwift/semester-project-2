@@ -183,28 +183,33 @@ export async function ProfilePage(name?: string): Promise<HTMLElement> {
     listingsTab.className =
       'font-bold text-navy hover:text-navy/90 pb-1 border-b-2 border-transparent hover:border-navy transition-all';
 
-    const bidsTab = document.createElement('button');
-    bidsTab.textContent = 'Bids';
-    bidsTab.className =
-      'font-bold text-navy hover:text-navy/90 pb-1 border-b-2 border-transparent hover:border-navy transition-all';
+    tabs.append(listingsTab);
 
-    const winsTab = document.createElement('button');
-    winsTab.textContent = 'Wins';
-    winsTab.className =
-      'font-bold text-navy hover:text-navy/90 pb-1 border-b-2 border-transparent hover:border-navy transition-all';
+    const tabsConfig = [{ name: 'Listings', element: listingsTab }];
 
-    tabs.append(listingsTab, bidsTab, winsTab);
+    if (isOwner) {
+      const bidsTab = document.createElement('button');
+      bidsTab.textContent = 'Bids';
+      bidsTab.className =
+        'font-bold text-navy hover:text-navy/90 pb-1 border-b-2 border-transparent hover:border-navy transition-all';
+
+      const winsTab = document.createElement('button');
+      winsTab.textContent = 'Wins';
+      winsTab.className =
+        'font-bold text-navy hover:text-navy/90 pb-1 border-b-2 border-transparent hover:border-navy transition-all';
+
+      tabs.append(bidsTab, winsTab);
+
+      tabsConfig.push(
+        { name: 'Bids', element: bidsTab },
+        { name: 'Wins', element: winsTab },
+      );
+    }
     profileCard.appendChild(tabs);
 
     const tabContent = document.createElement('div');
     tabContent.className = 'mt-6 text-center text-gray-500';
     profileCard.appendChild(tabContent);
-
-    const tabsConfig = [
-      { name: 'Listings', element: listingsTab },
-      { name: 'Bids', element: bidsTab },
-      { name: 'Wins', element: winsTab },
-    ];
 
     async function renderTab<T>(
       label: string,
@@ -263,6 +268,10 @@ export async function ProfilePage(name?: string): Promise<HTMLElement> {
           'listings',
           () => fetchProfileListings(profileData!.name),
           (item) => {
+            if (!isOwner) {
+              const isExpired = new Date(item.endsAt) < new Date();
+              if (isExpired) return document.createElement('div');
+            }
             const container = document.createElement('div');
             container.className =
               'p-4 border rounded-xl mb-2 text-left flex flex-col gap-2 group hover:border-navy transition-all bg-white shadow-sm';
