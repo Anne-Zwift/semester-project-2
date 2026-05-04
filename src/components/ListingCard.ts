@@ -20,6 +20,8 @@ export function ListingCard(item: Listing): HTMLElement {
     'https://images.unsplash.com/photo-1615485736894-a2d2e6d4cd9a?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bW9ja3VwfGVufDB8fDB8fHwy';
   img.alt = item.title;
   img.className = 'w-full h-full object-cover';
+  img.setAttribute('crossorigin', 'anonymous');
+  img.setAttribute('referrerpolicy', 'no-referrer');
 
   const timer = CountdownTimer(item.endsAt, 'card');
   imageContainer.appendChild(timer);
