@@ -79,6 +79,8 @@ export async function DetailsPage(): Promise<HTMLElement> {
       mainImg.alt = item.title;
       mainImg.className =
         'w-full aspect-video object-cover rounded-2xl shadow-md';
+      mainImg.setAttribute('crossorigin', 'anonymous');
+      mainImg.referrerPolicy = 'no-referrer';
       galleryContainer.appendChild(mainImg);
 
       if (item.media?.length) {
@@ -88,10 +90,11 @@ export async function DetailsPage(): Promise<HTMLElement> {
         item.media.forEach((imgObj) => {
           const thumb = document.createElement('img');
           thumb.src = imgObj.url;
-          thumb.alt = item.title;
+          thumb.alt = `Thumbnail for ${item.title}`;
           thumb.className =
             'w-20 h-20 object-cover rounded-lg cursor-pointer border-2 border-transparent hover:border-navy transition-all';
-
+          thumb.setAttribute('crossorigin', 'anonymous');
+          thumb.referrerPolicy = 'no-referrer';
           thumb.addEventListener('click', () => {
             mainImg.src = imgObj.url;
           });
