@@ -47,12 +47,19 @@ export async function router(): Promise<void> {
 
   const nav = Navigation();
 
-  const pageRoot = document.createElement('div');
-  pageRoot.id = 'content-area';
+  const pageRoot = document.createElement('main');
+  pageRoot.id = 'main-content';
+  pageRoot.className =
+    'flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 my-8';
 
   app.append(nav, pageRoot);
 
   if (path === '/') {
+    const hiddenTitle = document.createElement('h1');
+    hiddenTitle.className = 'sr-only';
+    hiddenTitle.textContent = 'Auctionic - Latest Auction Listings';
+    pageRoot.prepend(hiddenTitle);
+
     const page = await LandingPage(query, tag);
     pageRoot.appendChild(page);
   } else if (path === '/profile') {
