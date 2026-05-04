@@ -32,11 +32,11 @@
   }
 
   .mobile-menu-btn {
-    @apply flex flex-col justify-center items-center gap-[3px] p-2;
+    @apply flex flex-col justify-center items-center gap-0.75 p-2;
   }
 
   .nav-bar {
-    @apply block w-5 h-[2px] bg-navy transition-all duration-300 origin-center;
+    @apply block w-5 h-0.5 bg-navy transition-all duration-300 origin-center;
   }
 
   .is-open .bar-1 {

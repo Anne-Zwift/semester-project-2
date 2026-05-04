@@ -21,7 +21,7 @@ export function ListingCard(item: Listing): HTMLElement {
   img.alt = item.title;
   img.className = 'w-full h-full object-cover';
   img.setAttribute('crossorigin', 'anonymous');
-  img.setAttribute('referrerpolicy', 'no-referrer');
+  img.referrerPolicy = 'no-referrer';
 
   const timer = CountdownTimer(item.endsAt, 'card');
   imageContainer.appendChild(timer);
