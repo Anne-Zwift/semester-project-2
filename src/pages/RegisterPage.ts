@@ -27,9 +27,11 @@ export async function RegisterPage(): Promise<HTMLElement> {
 
   const nameLabel = document.createElement('label');
   nameLabel.textContent = 'Username';
+  nameLabel.htmlFor = 'register-name';
   nameLabel.className = 'block text-sm font-medium text-navy';
 
   const nameInput = document.createElement('input');
+  nameInput.id = 'register-name';
   nameInput.type = 'text';
   nameInput.name = 'name';
   nameInput.required = true;
@@ -42,9 +44,11 @@ export async function RegisterPage(): Promise<HTMLElement> {
 
   const emailLabel = document.createElement('label');
   emailLabel.textContent = 'Email';
+  emailLabel.htmlFor = 'register-email';
   emailLabel.className = 'block text-sm font-medium text-navy';
 
   const emailInput = document.createElement('input');
+  emailInput.id = 'register-email';
   emailInput.type = 'email';
   emailInput.name = 'email';
   emailInput.required = true;
@@ -57,9 +61,11 @@ export async function RegisterPage(): Promise<HTMLElement> {
 
   const passwordLabel = document.createElement('label');
   passwordLabel.textContent = 'Password';
+  passwordLabel.htmlFor = 'register-password';
   passwordLabel.className = 'block text-sm font-medium text-navy';
 
   const passwordInput = document.createElement('input');
+  passwordInput.id = 'register-password';
   passwordInput.type = 'password';
   passwordInput.name = 'password';
   passwordInput.required = true;
@@ -68,7 +74,7 @@ export async function RegisterPage(): Promise<HTMLElement> {
 
   const passwordValueText = document.createElement('p');
   passwordValueText.textContent = 'Password must be at least 8 characters.';
-  passwordValueText.className = 'text-xs text-gray-400 pt-1 pl-1';
+  passwordValueText.className = 'text-xs text-gray-600 pt-1 pl-1';
 
   passwordGroup.append(passwordLabel, passwordInput, passwordValueText);
 

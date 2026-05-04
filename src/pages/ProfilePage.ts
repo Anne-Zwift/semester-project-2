@@ -84,6 +84,8 @@ export async function ProfilePage(name?: string): Promise<HTMLElement> {
       const img = document.createElement('img');
       img.src = profileData.banner.url;
       img.alt = profileData.banner.alt || `${profileData.name}'s banner`;
+      img.setAttribute('crossorigin', 'anonymous');
+      img.referrerPolicy = 'no-referrer';
       img.className = 'w-full h-full rounded-lg object-cover';
       banner.appendChild(img);
     } else {
@@ -114,6 +116,8 @@ export async function ProfilePage(name?: string): Promise<HTMLElement> {
       img.src = profileData.avatar.url;
       img.alt = profileData.avatar.alt || `${profileData.name}'s avatar`;
       img.className = 'w-full h-full rounded-full object-cover';
+      img.setAttribute('crossorigin', 'anonymous');
+      img.referrerPolicy = 'no-referrer';
       avatar.appendChild(img);
     } else {
       avatar.textContent = userInitials;
@@ -236,7 +240,7 @@ export async function ProfilePage(name?: string): Promise<HTMLElement> {
 
         if (data.length === 0) {
           const empty = document.createElement('p');
-          empty.className = 'py-4 text-gray-400';
+          empty.className = 'py-4 text-gray-600';
           empty.textContent = `No ${label} found.`;
           tabContent.appendChild(empty);
           return;
@@ -255,11 +259,11 @@ export async function ProfilePage(name?: string): Promise<HTMLElement> {
     function setActiveTab(tab: string) {
       tabsConfig.forEach(({ element }) => {
         element.classList.remove('border-navy', 'text-navy');
-        element.classList.add('border-transparent', 'text-gray-400');
+        element.classList.add('border-transparent', 'text-gray-600');
       });
       const active = tabsConfig.find((t) => t.name === tab);
       if (active) {
-        active?.element.classList.remove('border-transparent', 'text-gray-400');
+        active?.element.classList.remove('border-transparent', 'text-gray-600');
         active?.element.classList.add('border-navy', 'text-navy');
       }
 
@@ -323,7 +327,7 @@ export async function ProfilePage(name?: string): Promise<HTMLElement> {
               item.tags.forEach((tag) => {
                 const tagBadge = document.createElement('span');
                 tagBadge.className =
-                  'text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full font-mono';
+                  'text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full font-mono';
                 tagBadge.textContent = `#${tag}`;
                 tagsWrapper.appendChild(tagBadge);
               });

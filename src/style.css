@@ -30,6 +30,26 @@
   .button-action {
     @apply px-5 py-2 bg-cyan-500 text-navy text-xs font-bold rounded-full shadow-md hover:shadow-lg hover:bg-cyan-600 active:scale-95 transition-all duration-200 min-w-20;
   }
+
+  .mobile-menu-btn {
+    @apply flex flex-col justify-center items-center gap-0.75 p-2;
+  }
+
+  .nav-bar {
+    @apply block w-5 h-0.5 bg-navy transition-all duration-300 origin-center;
+  }
+
+  .is-open .bar-1 {
+    transform: translateY(5px) rotate(45deg);
+  }
+
+  .is-open .bar-2 {
+    @apply opacity-0;
+  }
+
+  .is-open .bar-3 {
+    transform: translateY(-5px) rotate(-45deg);
+  }
 }
 
 /* :root {
