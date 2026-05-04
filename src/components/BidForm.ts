@@ -75,8 +75,10 @@ function renderActiveForm(container: HTMLElement, item: Listing) {
   const label = document.createElement('label');
   label.className = 'text-sm font-bold text-navy';
   label.textContent = `Place a bid (Min. ${minNextBid} Credits)`;
+  label.htmlFor = 'bid-amount-input';
 
   const input = document.createElement('input');
+  input.id = 'bid-amount-input';
   input.type = 'number';
   input.min = minNextBid.toString();
   input.value = minNextBid.toString();
