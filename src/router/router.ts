@@ -5,8 +5,9 @@ import { LoginPage } from '../pages/LoginPage';
 import { Navigation } from '../components/Navigation';
 import { store } from '../utils/store';
 import { ProfilePage } from '../pages/ProfilePage';
+import { SearchPage } from '../pages/SearchPage';
 
-const protectedRoutes = ['/profile'];
+const protectedRoutes = ['/profile', '/search'];
 const authRoutes = ['/login', '/register'];
 
 const routes: Record<string, () => Promise<HTMLElement>> = {
@@ -15,6 +16,7 @@ const routes: Record<string, () => Promise<HTMLElement>> = {
   '/register': RegisterPage,
   '/login': LoginPage,
   '/profile': ProfilePage,
+  '/search': SearchPage,
 };
 
 export async function router(): Promise<void> {
@@ -27,6 +29,7 @@ export async function router(): Promise<void> {
   const params = new URLSearchParams(window.location.search);
   const query = params.get('q') || '';
   const tag = params.get('tag') || '';
+  const profileName = params.get('name') ?? '';
 
   const isLoggedIn = Boolean(store.getToken());
 
@@ -51,6 +54,9 @@ export async function router(): Promise<void> {
 
   if (path === '/') {
     const page = await LandingPage(query, tag);
+    pageRoot.appendChild(page);
+  } else if (path === '/profile') {
+    const page = await ProfilePage(profileName);
     pageRoot.appendChild(page);
   } else if (path.startsWith('/listing')) {
     const page = await DetailsPage();

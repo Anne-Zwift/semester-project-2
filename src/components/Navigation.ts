@@ -36,7 +36,7 @@ export function Navigation(): HTMLElement {
 
   const allLinks = [
     { name: 'Home', path: '/', requiresLogin: false, alwaysShow: true },
-    { name: 'Search', path: '/search', requiresLogin: false, alwaysShow: true },
+    { name: 'Find Users', path: '/search', requiresLogin: true },
     {
       name: 'Login',
       path: '/login',

@@ -16,7 +16,7 @@ import { showDeleteConfirmation } from '../components/ConfirmModal';
 import { showToast } from '../components/Toast';
 import { Spinner } from '../components/Spinner';
 
-export async function ProfilePage(): Promise<HTMLElement> {
+export async function ProfilePage(name?: string): Promise<HTMLElement> {
   const pageContainer = document.createElement('div');
   pageContainer.className =
     'w-full flex flex-col items-center justify-center py-12';
@@ -35,23 +35,28 @@ export async function ProfilePage(): Promise<HTMLElement> {
   return pageContainer;
 
   async function fetchAndRender() {
-    const user = store.getUser();
-
-    let profileData: Profile | null = user;
+    let profileData: Profile | null = null;
     let fetchFailed = false;
 
     try {
-      if (user?.name) {
-        const response = await fetchProfile(user.name);
+      const targetName = name || store.getUser()?.name;
+      if (targetName) {
+        const response = await fetchProfile(targetName);
         if (response?.data) {
           profileData = response.data;
-          store.updateUser(response.data);
+
+          if (!name) {
+            store.updateUser(response.data);
+          }
         }
       }
     } catch (_error) {
       showToast('Failed to fetch profile. Please try again.', 'error');
       fetchFailed = true;
     }
+
+    const currentUser = store.getUser();
+    const isOwner = profileData?.name === currentUser?.name;
 
     profileCard.replaceChildren();
 
@@ -139,9 +144,16 @@ export async function ProfilePage(): Promise<HTMLElement> {
       document.body.append(modal);
     });
 
-    const name = document.createElement('h3');
-    name.className = 'text-lg font-bold font-sans mt-2 text-navy';
-    name.textContent = profileData?.name || 'Unknown User';
+    if (isOwner) {
+      actions.append(editButton, createListingButton);
+      avatarWrapper.append(avatar, actions);
+    } else {
+      avatarWrapper.append(avatar);
+    }
+
+    const displayName = document.createElement('h3');
+    displayName.className = 'text-lg font-bold font-sans mt-2 text-navy';
+    displayName.textContent = profileData?.name || 'Unknown User';
 
     const email = document.createElement('p');
     email.className = 'text-sm text-gray-500';
@@ -150,7 +162,7 @@ export async function ProfilePage(): Promise<HTMLElement> {
     const credits = document.createElement('p');
     credits.className =
       'max-w-max text-xs md:text-sm font-semibold font-mono text-navy uppercase bg-gray-200 p-2 rounded-full mt-2';
-    if (profileData?.name === store.getUser()?.name) {
+    if (isOwner) {
       credits.textContent = `Credits: ${profileData?.credits ?? 0}`;
     } else {
       credits.style.display = 'none';
@@ -159,9 +171,7 @@ export async function ProfilePage(): Promise<HTMLElement> {
     bio.className = 'text-sm text-gray-600 mt-4 text-center max-w-md mx-auto';
     bio.textContent = profileData?.bio || 'No bio added yet.';
 
-    actions.append(editButton, createListingButton);
-    avatarWrapper.append(avatar, actions);
-    header.append(avatarWrapper, name, email, credits);
+    header.append(avatarWrapper, displayName, email, credits);
     profileCard.append(banner, header, bio);
 
     const tabs = document.createElement('div');
@@ -173,28 +183,33 @@ export async function ProfilePage(): Promise<HTMLElement> {
     listingsTab.className =
       'font-bold text-navy hover:text-navy/90 pb-1 border-b-2 border-transparent hover:border-navy transition-all';
 
-    const bidsTab = document.createElement('button');
-    bidsTab.textContent = 'Bids';
-    bidsTab.className =
-      'font-bold text-navy hover:text-navy/90 pb-1 border-b-2 border-transparent hover:border-navy transition-all';
+    tabs.append(listingsTab);
 
-    const winsTab = document.createElement('button');
-    winsTab.textContent = 'Wins';
-    winsTab.className =
-      'font-bold text-navy hover:text-navy/90 pb-1 border-b-2 border-transparent hover:border-navy transition-all';
+    const tabsConfig = [{ name: 'Listings', element: listingsTab }];
 
-    tabs.append(listingsTab, bidsTab, winsTab);
+    if (isOwner) {
+      const bidsTab = document.createElement('button');
+      bidsTab.textContent = 'Bids';
+      bidsTab.className =
+        'font-bold text-navy hover:text-navy/90 pb-1 border-b-2 border-transparent hover:border-navy transition-all';
+
+      const winsTab = document.createElement('button');
+      winsTab.textContent = 'Wins';
+      winsTab.className =
+        'font-bold text-navy hover:text-navy/90 pb-1 border-b-2 border-transparent hover:border-navy transition-all';
+
+      tabs.append(bidsTab, winsTab);
+
+      tabsConfig.push(
+        { name: 'Bids', element: bidsTab },
+        { name: 'Wins', element: winsTab },
+      );
+    }
     profileCard.appendChild(tabs);
 
     const tabContent = document.createElement('div');
     tabContent.className = 'mt-6 text-center text-gray-500';
     profileCard.appendChild(tabContent);
-
-    const tabsConfig = [
-      { name: 'Listings', element: listingsTab },
-      { name: 'Bids', element: bidsTab },
-      { name: 'Wins', element: winsTab },
-    ];
 
     async function renderTab<T>(
       label: string,
@@ -253,6 +268,10 @@ export async function ProfilePage(): Promise<HTMLElement> {
           'listings',
           () => fetchProfileListings(profileData!.name),
           (item) => {
+            if (!isOwner) {
+              const isExpired = new Date(item.endsAt) < new Date();
+              if (isExpired) return document.createElement('div');
+            }
             const container = document.createElement('div');
             container.className =
               'p-4 border rounded-xl mb-2 text-left flex flex-col gap-2 group hover:border-navy transition-all bg-white shadow-sm';
@@ -291,7 +310,10 @@ export async function ProfilePage(): Promise<HTMLElement> {
             deleteBtn.addEventListener('click', () => {
               showDeleteConfirmation(item.id, () => setActiveTab('Listings'));
             });
-            actionsWrapper.append(editBtn, deleteBtn);
+
+            if (isOwner) {
+              actionsWrapper.append(editBtn, deleteBtn);
+            }
             topRow.append(title, actionsWrapper);
 
             const tagsWrapper = document.createElement('div');
