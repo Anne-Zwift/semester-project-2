@@ -29,22 +29,23 @@ export function ListingCard(item: Listing): HTMLElement {
   body.className = 'p-4 flex flex-col gap-2 flex-grow';
 
   const sellerInfo = document.createElement('p');
-  sellerInfo.className = 'text-xs text-gray-500 font-mono';
+  sellerInfo.className = 'text-xs text-gray-600 font-mono';
   sellerInfo.textContent = `Posted by: ${item.seller?.name || 'Unknown'}`;
 
   const postedDate = document.createElement('p');
-  postedDate.className = 'text-xs text-gray-500 font-mono';
+  postedDate.className = 'text-xs text-gray-600 font-mono';
 
   const dateText = formatStaticDate(item.created);
   postedDate.textContent = `Posted date: ${dateText}`;
 
-  const title = document.createElement('h3');
+  const title = document.createElement('h2');
   title.className =
     'pt-4 text-lg font-sans font-bold text-navy leading-6 line-clamp-2 break-words';
   title.textContent = item.title;
 
   const description = document.createElement('p');
-  description.className = 'text-sm font-sans text-gray-600 line-clamp-3';
+  description.className =
+    'text-sm font-medium font-sans text-navy line-clamp-3';
   description.textContent = item.description || 'No description provided';
 
   const bidsContainer = document.createElement('div');
@@ -53,7 +54,7 @@ export function ListingCard(item: Listing): HTMLElement {
 
   const bidsHeader = document.createElement('span');
   bidsHeader.className =
-    'text-[10px] font-bold text-gray-400 uppercase tracking-wider';
+    'text-[10px] font-bold text-gray-600 uppercase tracking-wider';
   bidsHeader.textContent = 'Current Highest Bid';
   bidsContainer.appendChild(bidsHeader);
 
@@ -76,7 +77,7 @@ export function ListingCard(item: Listing): HTMLElement {
     amountDisplay.textContent = `${currentWinner?.amount} Credits`;
 
     const bidDate = document.createElement('span');
-    bidDate.className = 'block text-[10px] text-gray-400';
+    bidDate.className = 'block text-[10px] text-gray-600 font-medium';
     bidDate.textContent = currentWinner?.created
       ? formatStaticDate(currentWinner.created)
       : '';
@@ -86,7 +87,7 @@ export function ListingCard(item: Listing): HTMLElement {
     bidsContainer.appendChild(bidSummaryRow);
   } else {
     const noBids = document.createElement('span');
-    noBids.className = 'text-xs text-gray-400 italic';
+    noBids.className = 'text-xs text-gray-600 italic';
     noBids.textContent = 'No bids yet. Be the first to bid';
     bidsContainer.appendChild(noBids);
   }
@@ -95,11 +96,6 @@ export function ListingCard(item: Listing): HTMLElement {
   tagsContainer.className = 'flex flex-wrap gap-2 mt-2';
 
   if (item.tags && item.tags.length > 0) {
-    /*   const hintText = document.createElement('p');
-  hintText.className = 'text-[10px] text-gray-400 font-sans mt-1';
-  hintText.textContent = 'Click a tag to filter';
-  tagsContainer.appendChild(hintText); */
-
     item.tags.forEach((tag) => {
       const tagSpan = document.createElement('span');
       tagSpan.className =

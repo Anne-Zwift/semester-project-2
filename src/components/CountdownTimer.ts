@@ -25,8 +25,8 @@ export function CountdownTimer(
     const labelSpan = document.createElement('span');
     labelSpan.className =
       variant === 'card'
-        ? 'text-[7px] uppercase text-gray-400'
-        : 'text-[10px] uppercase text-gray-400';
+        ? 'text-[10px] font-bold uppercase text-navy tracking-wider'
+        : 'text-[10px] font-bold uppercase text-navy tracking-wider';
     labelSpan.textContent = label;
     box.append(valSpan, labelSpan);
     return { box, valSpan };
