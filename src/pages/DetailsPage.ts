@@ -49,8 +49,10 @@ export async function DetailsPage(): Promise<HTMLElement> {
       galleryContainer.className = 'flex flex-col gap-4';
 
       const backButton = document.createElement('a');
+      backButton.href = '/';
       backButton.textContent = 'Back to Auction';
       backButton.className = 'button-primary w-48 cursor-pointer';
+      backButton.setAttribute('data-link', '');
 
       backButton.addEventListener('click', (event) => {
         event.preventDefault();
