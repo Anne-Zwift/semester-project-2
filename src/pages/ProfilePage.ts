@@ -84,6 +84,8 @@ export async function ProfilePage(name?: string): Promise<HTMLElement> {
       const img = document.createElement('img');
       img.src = profileData.banner.url;
       img.alt = profileData.banner.alt || `${profileData.name}'s banner`;
+      img.setAttribute('crossorigin', 'anonymous');
+      img.referrerPolicy = 'no-referrer';
       img.className = 'w-full h-full rounded-lg object-cover';
       banner.appendChild(img);
     } else {
@@ -114,6 +116,8 @@ export async function ProfilePage(name?: string): Promise<HTMLElement> {
       img.src = profileData.avatar.url;
       img.alt = profileData.avatar.alt || `${profileData.name}'s avatar`;
       img.className = 'w-full h-full rounded-full object-cover';
+      img.setAttribute('crossorigin', 'anonymous');
+      img.referrerPolicy = 'no-referrer';
       avatar.appendChild(img);
     } else {
       avatar.textContent = userInitials;
