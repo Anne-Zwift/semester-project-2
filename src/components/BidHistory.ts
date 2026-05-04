@@ -5,14 +5,14 @@ export function BidHistory(bids: Bid[] = []): HTMLElement {
   const container = document.createElement('div');
   container.className = 'mt-8 border-t border-gray-200 pt-6';
 
-  const title = document.createElement('h3');
+  const title = document.createElement('h2');
   title.className = 'text-lg font-sans font-bold text-navy gap-2';
   title.textContent = `Bid History (${bids.length})`;
 
   if (bids.length === 0) {
     const noBids = document.createElement('p');
     noBids.className =
-      'text-gray-400 italic py-4 text-center bg-gray-50 rounded-lg';
+      'text-gray-600 italic py-4 text-center bg-gray-50 rounded-lg';
     noBids.textContent = 'No bids yet';
     container.append(title, noBids);
     return container;
@@ -52,7 +52,7 @@ export function BidHistory(bids: Bid[] = []): HTMLElement {
     nameCell.textContent = bid.bidder?.name || 'Anonymous';
 
     const dateCell = document.createElement('td');
-    dateCell.className = 'px-4 py-4 text-xs text-gray-400 font-mono';
+    dateCell.className = 'px-4 py-4 text-xs text-gray-600 font-mono';
     dateCell.textContent = formatStaticDate(bid.created);
 
     const amountCell = document.createElement('td');
