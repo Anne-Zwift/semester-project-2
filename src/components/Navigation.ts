@@ -10,13 +10,16 @@ import { ListingForm } from './ListingForm';
 
 export function Navigation(): HTMLElement {
   const navigation = document.createElement('nav');
+  navigation.setAttribute('aria-label', 'Main navigation');
   navigation.className =
     'sticky top-0 z-50 w-full flex h-16 items-center justify-between px-4 md:px-8 bg-white/80 backdrop-blur-md border-b border-gray-100';
 
   const isLoggedIn = Boolean(store.getToken());
   const currentPath = window.location.pathname;
 
-  const brand = document.createElement('div');
+  const brand = document.createElement('a');
+  brand.href = '/';
+  brand.setAttribute('aria-label', 'Auction Home');
   brand.className = 'flex items-center cursor-pointer';
 
   const logo = document.createElement('img');
@@ -93,6 +96,10 @@ export function Navigation(): HTMLElement {
     profileWrapper.className = 'flex items-center gap-3 border-l pl-4 ml-2';
 
     const credits = document.createElement('div');
+    credits.setAttribute(
+      'aria-label',
+      `You have ${store.getCredits()} credits available`,
+    );
     credits.className = 'hidden sm:flex flex-col items-end';
 
     const amount = document.createElement('span');
@@ -140,20 +147,24 @@ export function Navigation(): HTMLElement {
   const mobileMenuBar = document.createElement('button');
   mobileMenuBar.className =
     'md:hidden flex flex-col justify-center items-center gap-[3px] p-2 group';
+  mobileMenuBar.setAttribute('aria-label', 'Toggle navigation menu');
+  mobileMenuBar.setAttribute('aria-expanded', 'false');
+  mobileMenuBar.setAttribute('aria-controls', 'mobile-drawer');
 
-  const createBar = () => {
+  const createBar = (index: number) => {
     const bar = document.createElement('span');
-    bar.className = 'block w-5 h-[2px] bg-navy transition-all duration-300';
+    bar.className = `nav-bar bar-${index}`;
     return bar;
   };
 
-  const bar1 = createBar();
-  const bar2 = createBar();
-  const bar3 = createBar();
+  const bar1 = createBar(1);
+  const bar2 = createBar(2);
+  const bar3 = createBar(3);
 
   mobileMenuBar.append(bar1, bar2, bar3);
 
   const mobileDrawer = document.createElement('div');
+  mobileDrawer.id = 'mobile-drawer';
   mobileDrawer.className =
     'hidden absolute top-16 left-0 w-full bg-white/95 backdrop-blur-md flex-col p-4 shadow-lg z-40 md:hidden';
 
@@ -180,10 +191,17 @@ export function Navigation(): HTMLElement {
     const isHidden = mobileDrawer.classList.contains('hidden');
     if (isHidden) {
       mobileDrawer.classList.replace('hidden', 'flex');
+      mobileMenuBar.setAttribute('aria-expanded', 'true');
+      mobileMenuBar.classList.add('is-open');
+      const firstLink = mobileDrawer.querySelector('a');
+      firstLink?.focus({ preventScroll: true });
     } else {
       mobileDrawer.classList.replace('flex', 'hidden');
+      mobileMenuBar.setAttribute('aria-expanded', 'false');
+      mobileMenuBar.classList.remove('is-open');
     }
   });
+
   navigation.append(
     brand,
     linkContainer,
