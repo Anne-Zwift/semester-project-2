@@ -29,9 +29,11 @@ export async function LoginPage(): Promise<HTMLElement> {
 
   const emailLabel = document.createElement('label');
   emailLabel.textContent = 'Email';
+  emailLabel.htmlFor = 'login-email';
   emailLabel.className = 'block text-sm font-medium text-navy';
 
   const emailInput = document.createElement('input');
+  emailInput.id = 'login-email';
   emailInput.type = 'email';
   emailInput.name = 'email';
   emailInput.required = true;
@@ -44,9 +46,11 @@ export async function LoginPage(): Promise<HTMLElement> {
 
   const passwordLabel = document.createElement('label');
   passwordLabel.textContent = 'Password';
+  passwordLabel.htmlFor = 'login-password';
   passwordLabel.className = 'block text-sm font-medium text-navy';
 
   const passwordInput = document.createElement('input');
+  passwordInput.id = 'login-password';
   passwordInput.type = 'password';
   passwordInput.name = 'password';
   passwordInput.required = true;
