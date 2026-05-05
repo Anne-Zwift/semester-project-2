@@ -8,7 +8,7 @@ export function ListingCard(item: Listing): HTMLElement {
   const isLoggedIn = !!store.getToken();
   const card = document.createElement('article');
   card.className =
-    'flex flex-col bg-white rounded-xl shadow-md overflow-hidden border-gray-200 hover:shadow-lg transition-shadow';
+    'flex flex-col h-full justify-between bg-white rounded-xl shadow-md overflow-hidden border-gray-200 hover:shadow-lg transition-shadow';
 
   const imageContainer = document.createElement('div');
   imageContainer.className =
