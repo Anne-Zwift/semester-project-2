@@ -3,8 +3,9 @@ import { store } from '../utils/store';
 import { ListingForm } from './ListingForm';
 
 /**
- * Creates the main navigation bar
- * This component handles navigation clicks using the router.
+ * Creates the main navigation bar.
+ * Handles responsive layout adjustments, showing primary account info on mobile
+ * while moving action triggers (Create, Logout) into the mobile drawer.
  * @returns {HTMLElement} The navigation container element.
  */
 
@@ -16,6 +17,20 @@ export function Navigation(): HTMLElement {
 
   const isLoggedIn = Boolean(store.getToken());
   const currentPath = window.location.pathname;
+
+  const handleCreateClick = () => {
+    const modal = ListingForm(undefined, () => {
+      window.history.pushState({}, '', '/profile');
+      router();
+    });
+    document.body.append(modal);
+  };
+
+  const handleLogoutClick = () => {
+    store.clear();
+    window.history.pushState({}, '', '/');
+    router();
+  };
 
   const brand = document.createElement('a');
   brand.href = '/';
@@ -76,73 +91,12 @@ export function Navigation(): HTMLElement {
   });
 
   const authSection = document.createElement('div');
-  authSection.className = 'flex items-center gap-4';
+  authSection.className = 'flex items-center gap-3 md:gap-4';
 
-  if (isLoggedIn) {
-    const createListingBtn = document.createElement('button');
-    createListingBtn.textContent = 'Create';
-    createListingBtn.className =
-      'px-3 py-1.5 bg-navy text-white text-xs font-bold rounded-lg hover:bg-navy/90 shadow-sm active:scale-95';
-
-    createListingBtn.addEventListener('click', () => {
-      const modal = ListingForm(undefined, () => {
-        window.history.pushState({}, '', '/profile');
-        router();
-      });
-      document.body.append(modal);
-    });
-
-    const profileWrapper = document.createElement('div');
-    profileWrapper.className = 'flex items-center gap-3 border-l pl-4 ml-2';
-
-    const credits = document.createElement('div');
-    credits.setAttribute(
-      'aria-label',
-      `You have ${store.getCredits()} credits available`,
-    );
-    credits.className = 'hidden sm:flex flex-col items-end';
-
-    const amount = document.createElement('span');
-    amount.id = 'nav-credits-amount';
-    amount.className = 'text-xs font-mono font-bold text-navy';
-    amount.textContent = String(store.getCredits());
-
-    store.subscribe(() => {
-      const el = document.getElementById('nav-credits-amount');
-      if (el) {
-        el.textContent = String(store.getCredits());
-      }
-    });
-
-    const designationLabel = document.createElement('span');
-    designationLabel.className =
-      'text-[10px] uppercase text-gray-400 tracking-normal';
-    designationLabel.textContent = 'Credits';
-
-    credits.append(amount, designationLabel);
-
-    const profileAvatar = document.createElement('div');
-    profileAvatar.className =
-      'w-9 h-9 rounded-full bg-navy flex items-center justify-center text-xs text-white font-bold border-2 border-gray-100 shadow-sm';
-    const user = store.getUser?.();
-    profileAvatar.textContent = user?.name?.slice(0, 2).toUpperCase() || '?';
-
-    profileWrapper.append(credits, profileAvatar);
-    authSection.prepend(profileWrapper);
-
-    const logoutButton = document.createElement('button');
-    logoutButton.textContent = 'Logout';
-    logoutButton.className =
-      'text-sm text-red-600 hover:text-red-700 font-medium hover:underline';
-    logoutButton.addEventListener('click', () => {
-      store.clear();
-      window.history.pushState({}, '', '/');
-      router();
-    });
-    authSection.appendChild(logoutButton);
-    authSection.prepend(createListingBtn);
-    authSection.prepend(profileWrapper);
-  }
+  const mobileDrawer = document.createElement('div');
+  mobileDrawer.id = 'mobile-drawer';
+  mobileDrawer.className =
+    'hidden absolute top-16 left-0 w-full bg-white/95 backdrop-blur-md flex-col p-4 shadow-lg z-40 md:hidden gap-3 border-b border-gray-100';
 
   const mobileMenuBar = document.createElement('button');
   mobileMenuBar.className =
@@ -163,10 +117,87 @@ export function Navigation(): HTMLElement {
 
   mobileMenuBar.append(bar1, bar2, bar3);
 
-  const mobileDrawer = document.createElement('div');
-  mobileDrawer.id = 'mobile-drawer';
-  mobileDrawer.className =
-    'hidden absolute top-16 left-0 w-full bg-white/95 backdrop-blur-md flex-col p-4 shadow-lg z-40 md:hidden';
+  if (isLoggedIn) {
+    const createListingBtn = document.createElement('button');
+    createListingBtn.textContent = 'Create';
+    createListingBtn.className =
+      'hidden md:flex px-3 py-1.5 bg-navy text-white text-xs font-bold rounded-lg hover:bg-navy/90 shadow-sm active:scale-95 cursor-pointer md:order-1';
+
+    createListingBtn.addEventListener('click', handleCreateClick);
+
+    const profileWrapper = document.createElement('div');
+    profileWrapper.className =
+      'flex items-center gap-3 md:border-l md:pl-4 md:ml-2 md:order-3';
+
+    const credits = document.createElement('div');
+    credits.setAttribute(
+      'aria-label',
+      `You have ${store.getCredits()} credits available`,
+    );
+    credits.className = 'flex flex-col items-end';
+
+    const amount = document.createElement('span');
+    amount.id = 'nav-credits-amount';
+    amount.className = 'text-xs font-mono font-bold text-navy';
+    amount.textContent = String(store.getCredits());
+
+    store.subscribe(() => {
+      const el = document.getElementById('nav-credits-amount');
+      if (el) {
+        el.textContent = String(store.getCredits());
+      }
+    });
+
+    const designationLabel = document.createElement('span');
+    designationLabel.className =
+      'text-[9px] md:text-[10px] uppercase text-gray-600 tracking-normal';
+    designationLabel.textContent = 'Credits';
+
+    credits.append(amount, designationLabel);
+
+    const profileAvatar = document.createElement('div');
+    profileAvatar.className =
+      'w-9 h-9 rounded-full bg-navy flex items-center justify-center text-xs text-white font-bold border-2 border-gray-100 shadow-sm';
+    const user = store.getUser?.();
+    profileAvatar.textContent = user?.name?.slice(0, 2).toUpperCase() || '?';
+
+    profileWrapper.append(credits, profileAvatar);
+    authSection.prepend(profileWrapper);
+
+    const logoutButton = document.createElement('button');
+    logoutButton.textContent = 'Logout';
+    logoutButton.className =
+      'hidden md:inline-block text-sm text-red-600 hover:text-red-700 font-medium hover:underline cursor-pointer md:order-2';
+
+    logoutButton.addEventListener('click', handleLogoutClick);
+
+    authSection.appendChild(logoutButton);
+    authSection.prepend(createListingBtn);
+    authSection.prepend(profileWrapper);
+
+    const mobileCreateBtn = document.createElement('button');
+    mobileCreateBtn.textContent = 'Create Listing';
+    mobileCreateBtn.className =
+      'w-full py-2.5 bg-navy text-white text-sm font-bold rounded-lg shadow-sm active:scale-95 mt-2 cursor-pointer';
+    mobileCreateBtn.addEventListener('click', () => {
+      mobileDrawer.classList.replace('flex', 'hidden');
+      mobileMenuBar.setAttribute('area-expanded', 'false');
+      mobileMenuBar.classList.remove('is-open');
+      handleCreateClick();
+    });
+
+    const mobileLogoutBtn = document.createElement('button');
+    mobileLogoutBtn.textContent = 'Logout';
+    mobileLogoutBtn.className =
+      'w-full py-2.5 bg-red-50 text-red-700 hover:bg-red-100 rounded-lg text-sm font-bold transition-colors cursor-pointer mt-2';
+    mobileLogoutBtn.addEventListener('click', () => {
+      mobileDrawer.classList.replace('flex', 'hidden');
+      handleLogoutClick();
+    });
+
+    mobileDrawer.appendChild(mobileCreateBtn);
+    mobileDrawer.appendChild(mobileLogoutBtn);
+  }
 
   allLinks.forEach((link) => {
     if (isLoggedIn && link.hideIfLoggedIn) return;
@@ -184,7 +215,7 @@ export function Navigation(): HTMLElement {
       mobileDrawer.classList.replace('flex', 'hidden');
       router();
     });
-    mobileDrawer.appendChild(mobileLink);
+    mobileDrawer.prepend(mobileLink);
   });
 
   mobileMenuBar.addEventListener('click', () => {
