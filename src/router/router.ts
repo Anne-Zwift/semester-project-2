@@ -3,6 +3,7 @@ import { DetailsPage } from '../pages/DetailsPage';
 import { RegisterPage } from '../pages/RegisterPage';
 import { LoginPage } from '../pages/LoginPage';
 import { Navigation } from '../components/Navigation';
+import { Footer } from '../components/Footer';
 import { store } from '../utils/store';
 import { ProfilePage } from '../pages/ProfilePage';
 import { SearchPage } from '../pages/SearchPage';
@@ -45,12 +46,14 @@ export async function router(): Promise<void> {
 
   app.replaceChildren();
 
+  app.className = 'flex flex-col min-h-screen';
+
   const nav = Navigation();
 
   const pageRoot = document.createElement('main');
   pageRoot.id = 'main-content';
   pageRoot.className =
-    'flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 my-8';
+    'flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 my-8';
 
   app.append(nav, pageRoot);
 
@@ -77,4 +80,7 @@ export async function router(): Promise<void> {
     errorHeading.textContent = '404 - Page Not Found';
     pageRoot.appendChild(errorHeading);
   }
+
+  const footerElement = Footer();
+  app.appendChild(footerElement);
 }
