@@ -18,7 +18,7 @@ export function Footer(): HTMLElement {
     'flex items-center justify-center cursor-pointer transition-transform duration-200 hover:scale-105';
 
   const logoImg = document.createElement('img');
-  logoImg.src = '/assets/logo-mobile.svg';
+  logoImg.src = '/assets/brand-logo.svg';
   logoImg.alt = 'Auction Logo';
   logoImg.className = 'h-7 w-auto';
 
