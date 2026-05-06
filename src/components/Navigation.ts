@@ -13,7 +13,11 @@ export function Navigation(): HTMLElement {
   const navigation = document.createElement('nav');
   navigation.setAttribute('aria-label', 'Main navigation');
   navigation.className =
-    'sticky top-0 z-50 w-full flex h-16 items-center justify-between px-4 md:px-8 bg-white/80 backdrop-blur-md border-b border-gray-100';
+    'sticky top-0 z-50 w-full h-16 bg-white/80 backdrop-blur-md border-b border-gray-100';
+
+  const innerContainer = document.createElement('div');
+  innerContainer.className =
+    'max-w-7xl mx-auto px-4 md:px-8 h-full flex items-center justify-between gap-4';
 
   const isLoggedIn = Boolean(store.getToken());
   const currentPath = window.location.pathname;
@@ -32,25 +36,33 @@ export function Navigation(): HTMLElement {
     router();
   };
 
+  const leftCol = document.createElement('div');
+  leftCol.className = 'flex1 flex justify-start';
+
   const brand = document.createElement('a');
   brand.href = '/';
   brand.setAttribute('aria-label', 'Auction Home');
-  brand.className = 'flex items-center cursor-pointer';
+  brand.className = 'flex items-center cursor-pointer group';
 
   const logo = document.createElement('img');
-  logo.src = '/assets/logo.svg';
-  logo.alt = 'Auction Logo';
+  logo.src = '/assets/brand-logo.svg';
+  logo.alt = 'Auction Logo Icon';
   logo.className =
-    'h-8 w-auto transition-transform duration-200 hover:scale-105';
-
-  brand.appendChild(logo);
-  brand.addEventListener('click', () => {
+    'h-8 w-auto transition-transform duration-300 group-hover:scale-105';
+  brand.append(logo);
+  brand.addEventListener('click', (event) => {
+    event.preventDefault();
     window.history.pushState({}, '', '/');
     router();
   });
+  leftCol.appendChild(brand);
+
+  const centerCol = document.createElement('div');
+  centerCol.className =
+    'hidden md:flex flex-1 justify-center items-center max-w-md mx-auto';
 
   const linkContainer = document.createElement('div');
-  linkContainer.className = 'hidden md:flex gap-x-6 items-center';
+  linkContainer.className = 'flex gap-x-8 items-center justify-center';
 
   const allLinks = [
     { name: 'Home', path: '/', requiresLogin: false, alwaysShow: true },
@@ -89,6 +101,11 @@ export function Navigation(): HTMLElement {
 
     linkContainer.appendChild(anchor);
   });
+
+  centerCol.appendChild(linkContainer);
+
+  const rightCol = document.createElement('div');
+  rightCol.className = 'flex-1 flex items-center justify-end gap-3 md:gap-4';
 
   const authSection = document.createElement('div');
   authSection.className = 'flex items-center gap-3 md:gap-4';
@@ -233,12 +250,11 @@ export function Navigation(): HTMLElement {
     }
   });
 
-  navigation.append(
-    brand,
-    linkContainer,
-    authSection,
-    mobileMenuBar,
-    mobileDrawer,
-  );
+  rightCol.append(authSection, mobileMenuBar);
+
+  innerContainer.append(leftCol, centerCol, rightCol);
+
+  navigation.append(innerContainer, mobileDrawer);
+
   return navigation;
 }
