@@ -3,6 +3,7 @@ import { SearchBar } from '../components/SearchBar';
 import { ProfileCard } from '../components/ProfileCard';
 import { fetchProfileSearch } from '../api/Profile';
 import { showToast } from '../components/Toast';
+import { router } from '../router/router';
 
 function getSearchQuery(): string {
   const params = new URLSearchParams(window.location.search);
@@ -126,7 +127,7 @@ export async function SearchPage(): Promise<HTMLElement> {
             if (searchInput) {
               searchInput.value = '';
             }
-            import('../router/router').then((m) => m.router());
+            router();
           });
           emptyWrapper.append(clearBtn);
         }
