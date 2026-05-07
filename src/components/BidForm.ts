@@ -18,8 +18,20 @@ export function BidForm(item: Listing): HTMLElement {
   container.className = 'my-6 p-6 bg-white rounded-2xl border border-gray-200';
   const user = store.getUser();
   const token = store.getToken();
+
+  const highestBid = getHighestBid(item.bids);
+  const isLeading = user?.name === highestBid?.bidder?.name;
+
   const isOwner = user?.name === item.seller?.name;
   const isExpired = new Date(item.endsAt) < new Date();
+
+  if (isLeading) {
+    const leadingMsg = document.createElement('p');
+    leadingMsg.className = 'text-md text-success font-bold italic text-center';
+    leadingMsg.textContent = 'You are currently leading this auction! 🎉';
+    container.appendChild(leadingMsg);
+    return container;
+  }
 
   if (!token) {
     const loginPrompt = document.createElement('div');
@@ -85,7 +97,7 @@ function renderActiveForm(container: HTMLElement, item: Listing) {
 
   const submitButton = document.createElement('button');
   submitButton.type = 'submit';
-  submitButton.className = 'button-action';
+  submitButton.className = 'button-action w-fit px-12 mx-auto md:mx-0';
   submitButton.textContent = 'Place Bid';
 
   form.append(label, input, submitButton);
@@ -96,6 +108,9 @@ function renderActiveForm(container: HTMLElement, item: Listing) {
 
     try {
       const response = await placeBid(item.id, amount);
+
+      submitButton.disabled = true;
+      submitButton.textContent = 'Processing...';
 
       if (response?.data) {
         await store.fetchAndUpdateProfile();
@@ -108,6 +123,9 @@ function renderActiveForm(container: HTMLElement, item: Listing) {
           ? error.message
           : 'Something went wrong. Your bid was not placed.';
       showToast(displayMessage, 'error');
+
+      submitButton.disabled = false;
+      submitButton.textContent = 'Place Bid';
     }
   });
   container.appendChild(form);
