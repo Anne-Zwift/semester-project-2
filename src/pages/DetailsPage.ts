@@ -5,6 +5,7 @@ import { fetchListingId } from '../api/Listings';
 import { BidForm } from '../components/BidForm';
 import { showToast } from '../components/Toast';
 import { SkeletonDetails } from '../components/SkeletonDetails';
+import { setupImageWithFallback } from '../utils/fallbackHelpers';
 
 /**Renders the main Details Page structure with img and smaller image variants.
  * @async function.
@@ -75,14 +76,14 @@ export async function DetailsPage(): Promise<HTMLElement> {
 
       const history = BidHistory(item.bids);
 
+      const placeholder = 'https://placehold.co/600x400?text=No+Image';
+
       const mainImg = document.createElement('img');
-      mainImg.src =
-        item.media?.[0]?.url || 'https://placehold.co/600x400?text=No+Image';
-      mainImg.alt = item.title;
       mainImg.className =
         'w-full aspect-video object-cover rounded-2xl shadow-md';
-      mainImg.setAttribute('crossorigin', 'anonymous');
-      mainImg.referrerPolicy = 'no-referrer';
+      mainImg.alt = `Image for ${item.title}`;
+      setupImageWithFallback(mainImg, item.media?.[0]?.url, placeholder);
+
       galleryContainer.appendChild(mainImg);
 
       if (item.media?.length) {
@@ -91,13 +92,13 @@ export async function DetailsPage(): Promise<HTMLElement> {
 
         item.media.forEach((imgObj) => {
           const thumb = document.createElement('img');
-          thumb.src = imgObj.url;
-          thumb.alt = `Thumbnail for ${item.title}`;
           thumb.className =
             'w-20 h-20 object-cover rounded-lg cursor-pointer border-2 border-transparent hover:border-navy transition-all';
-          thumb.setAttribute('crossorigin', 'anonymous');
-          thumb.referrerPolicy = 'no-referrer';
+          thumb.alt = `Thumbnail for ${item.title}`;
+          setupImageWithFallback(thumb, imgObj.url, placeholder);
+
           thumb.addEventListener('click', () => {
+            mainImg.classList.add('opacity-[0.01]');
             mainImg.src = imgObj.url;
           });
 

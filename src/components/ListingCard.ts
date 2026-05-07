@@ -3,6 +3,7 @@ import { formatStaticDate } from '../utils/dateFormatter';
 import { getHighestBid } from '../utils/bidHelpers';
 import { CountdownTimer } from './CountdownTimer';
 import { store } from '../utils/store';
+import { setupImageWithFallback } from '../utils/fallbackHelpers';
 
 export function ListingCard(item: Listing): HTMLElement {
   const isLoggedIn = !!store.getToken();
@@ -18,38 +19,11 @@ export function ListingCard(item: Listing): HTMLElement {
     'https://images.unsplash.com/photo-1615485736894-a2d2e6d4cd9a?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bW9ja3VwfGVufDB8fDB8fHwy';
 
   const img = document.createElement('img');
-  img.src = item.media?.[0]?.url || placeholder;
   img.alt = item.title || '';
   img.className =
     'w-full h-full object-cover opacity-[0.01] transition-opacity duration-300';
 
-  img.setAttribute('crossorigin', 'anonymous');
-  img.referrerPolicy = 'no-referrer';
-
-  img.addEventListener('load', () => {
-    img.classList.remove('opacity-[0.01]');
-    img.classList.add('opacity-100');
-  });
-
-  img.addEventListener(
-    'error',
-    () => {
-      img.onerror = null;
-      img.removeAttribute('crossorigin');
-
-      if (img.src !== placeholder) {
-        img.src = placeholder;
-      }
-      img.classList.remove('opacity-[0.01]');
-      img.classList.add('opacity-50');
-    },
-    { once: true },
-  );
-
-  if (img.complete) {
-    img.classList.remove('opacity-[0.01]');
-    img.classList.add('opacity-100');
-  }
+  setupImageWithFallback(img, item.media?.[0]?.url, placeholder);
 
   const timer = CountdownTimer(item.endsAt, 'card');
   imageContainer.appendChild(timer);
