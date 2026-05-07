@@ -5,13 +5,13 @@
 @theme {
   /* Branding Colors */
   --color-navy: #1d3557;
-  --color-cyan: #0cead9;
+  --color-cyan: #005814;
   --color-orange: #f4a261;
   --color-offwhite: #f8f9fa;
 
   /* Semantic Colors */
   --color-success: #00bc78;
-  --color-error: #0cead9;
+  --color-error: oklch(57.7% 0.245 27.325);
   --color-warning: #5e0c00;
 
   /* Custom Fonts */

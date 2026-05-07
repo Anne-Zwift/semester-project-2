@@ -44,7 +44,7 @@ export function BidForm(item: Listing): HTMLElement {
 
   if (isExpired) {
     const endedMsg = document.createElement('p');
-    endedMsg.className = 'text-sm text-error font-bold italic text-center';
+    endedMsg.className = 'text-md text-error font-normal italic text-center';
     endedMsg.textContent =
       'This auction has ended. No more bids can be placed.';
     container.appendChild(endedMsg);
