@@ -178,20 +178,41 @@ export async function LandingPage(
         }
         carouselContainer.after(divider);
 
+        gridContainer.replaceChildren();
+
+        const titleWrapper = document.createElement('div');
+        titleWrapper.className = 'mt-12 mb-10 mx-4 md:mx-0 flex flex-col gap-2';
+
         const gridTitle = document.createElement('h2');
-        gridTitle.className =
-          'text-2xl font-bold text-navy mt-12 mb-6 mx-4 md:mx-0';
+        gridTitle.className = 'text-2xl font-bold text-navy text-sans';
+
+        const gridDescription = document.createElement('p');
+        gridDescription.className = 'text-gray-600 text-md';
 
         if (searchQuery.trim()) {
-          gridTitle.textContent = `Search Results for "${searchQuery}"`;
+          gridTitle.textContent = 'Search Results';
+          gridDescription.textContent = `Showing items matching "${searchQuery}"`;
+
+          const clearLink = document.createElement('span');
+          clearLink.textContent = 'Clear search';
+          clearLink.className =
+            'text-navy font-bold underline cursor-pointer ml-2';
+          clearLink.onclick = () => {
+            window.history.pushState({}, '', '/');
+            window.dispatchEvent(new Event('popstate'));
+          };
+          gridDescription.appendChild(clearLink);
         } else if (activeTag.trim()) {
-          gridTitle.textContent = `Auctions tagged #${activeTag}`;
+          gridTitle.textContent = `Tag: #${activeTag}`;
+          gridDescription.textContent = `Browsing all items categorized under this tag.`;
         } else {
           gridTitle.textContent = 'Explore All Auctions';
+          gridDescription.textContent =
+            'Discover unique items and place your bids today.';
         }
 
-        gridContainer.replaceChildren();
-        gridContainer.appendChild(gridTitle);
+        titleWrapper.append(gridTitle, gridDescription);
+        gridContainer.appendChild(titleWrapper);
 
         renderListings(
           allListings,
@@ -263,6 +284,7 @@ function renderListings(
 
     clearBtn.addEventListener('click', () => {
       window.history.pushState({}, '', '/');
+      window.dispatchEvent(new Event('popstate'));
       router();
     });
 

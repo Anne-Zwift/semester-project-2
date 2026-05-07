@@ -14,6 +14,21 @@ export async function SearchPage(): Promise<HTMLElement> {
   const container = document.createElement('div');
   container.className = 'w-full max-w-6xl mx-auto px-4 md:px-8 py-12';
 
+  const backButton = document.createElement('a');
+  backButton.href = '/';
+  backButton.textContent = '← Back to Auctions';
+  backButton.className =
+    'text-navy font-bold hover:underline mb-8 inline-block';
+  backButton.setAttribute('data-link', '');
+
+  backButton.addEventListener('click', (event) => {
+    event.preventDefault();
+    window.history.pushState({}, '', '/');
+    router();
+  });
+
+  container.appendChild(backButton);
+
   const header = document.createElement('header');
   header.className =
     'max-w-4xl mx-auto flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12';
