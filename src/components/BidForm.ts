@@ -15,8 +15,7 @@ import { showToast } from './Toast';
 
 export function BidForm(item: Listing): HTMLElement {
   const container = document.createElement('div');
-  container.className =
-    'my-6 p-6 bg-gray-50 rounded-2xl border border-gray-100';
+  container.className = 'my-6 p-6 bg-white rounded-2xl border border-gray-200';
   const user = store.getUser();
   const token = store.getToken();
   const isOwner = user?.name === item.seller?.name;
@@ -37,8 +36,7 @@ export function BidForm(item: Listing): HTMLElement {
 
   if (isOwner) {
     const ownerMsg = document.createElement('p');
-    ownerMsg.className =
-      'text-sm text-warning font-semibold italic text-center';
+    ownerMsg.className = 'text-md text-warning font-normal italic text-center';
     ownerMsg.textContent = 'You cannot bid on your own listing.';
     container.appendChild(ownerMsg);
     return container;
@@ -46,7 +44,7 @@ export function BidForm(item: Listing): HTMLElement {
 
   if (isExpired) {
     const endedMsg = document.createElement('p');
-    endedMsg.className = 'text-sm text-error font-semibold italic text-center';
+    endedMsg.className = 'text-sm text-error font-bold italic text-center';
     endedMsg.textContent =
       'This auction has ended. No more bids can be placed.';
     container.appendChild(endedMsg);
