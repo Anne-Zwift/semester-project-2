@@ -3,6 +3,7 @@ import { SearchBar } from '../components/SearchBar';
 import { ProfileCard } from '../components/ProfileCard';
 import { fetchProfileSearch } from '../api/Profile';
 import { showToast } from '../components/Toast';
+import { router } from '../router/router';
 
 function getSearchQuery(): string {
   const params = new URLSearchParams(window.location.search);
@@ -12,6 +13,21 @@ function getSearchQuery(): string {
 export async function SearchPage(): Promise<HTMLElement> {
   const container = document.createElement('div');
   container.className = 'w-full max-w-6xl mx-auto px-4 md:px-8 py-12';
+
+  const backButton = document.createElement('a');
+  backButton.href = '/';
+  backButton.textContent = '← Back to Auctions';
+  backButton.className =
+    'text-navy font-bold hover:underline mb-8 inline-block';
+  backButton.setAttribute('data-link', '');
+
+  backButton.addEventListener('click', (event) => {
+    event.preventDefault();
+    window.history.pushState({}, '', '/');
+    router();
+  });
+
+  container.appendChild(backButton);
 
   const header = document.createElement('header');
   header.className =
@@ -126,7 +142,7 @@ export async function SearchPage(): Promise<HTMLElement> {
             if (searchInput) {
               searchInput.value = '';
             }
-            import('../router/router').then((m) => m.router());
+            router();
           });
           emptyWrapper.append(clearBtn);
         }

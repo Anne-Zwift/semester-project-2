@@ -15,12 +15,32 @@ import { showToast } from './Toast';
 
 export function BidForm(item: Listing): HTMLElement {
   const container = document.createElement('div');
-  container.className =
-    'my-6 p-6 bg-gray-50 rounded-2xl border border-gray-100';
+  container.className = 'my-6 p-6 bg-white rounded-2xl border border-gray-200';
   const user = store.getUser();
   const token = store.getToken();
+
+  const highestBid = getHighestBid(item.bids);
+  const isLeading = user?.name === highestBid?.bidder?.name;
+
   const isOwner = user?.name === item.seller?.name;
   const isExpired = new Date(item.endsAt) < new Date();
+
+  if (isExpired) {
+    const endedMsg = document.createElement('p');
+    endedMsg.className = 'text-md text-error font-normal italic text-center';
+    endedMsg.textContent =
+      'This auction has ended. No more bids can be placed.';
+    container.appendChild(endedMsg);
+    return container;
+  }
+
+  if (isLeading) {
+    const leadingMsg = document.createElement('p');
+    leadingMsg.className = 'text-md text-success font-bold italic text-center';
+    leadingMsg.textContent = 'You are currently leading this auction! 🎉';
+    container.appendChild(leadingMsg);
+    return container;
+  }
 
   if (!token) {
     const loginPrompt = document.createElement('div');
@@ -37,19 +57,9 @@ export function BidForm(item: Listing): HTMLElement {
 
   if (isOwner) {
     const ownerMsg = document.createElement('p');
-    ownerMsg.className =
-      'text-sm text-warning font-semibold italic text-center';
+    ownerMsg.className = 'text-md text-warning font-normal italic text-center';
     ownerMsg.textContent = 'You cannot bid on your own listing.';
     container.appendChild(ownerMsg);
-    return container;
-  }
-
-  if (isExpired) {
-    const endedMsg = document.createElement('p');
-    endedMsg.className = 'text-sm text-error font-semibold italic text-center';
-    endedMsg.textContent =
-      'This auction has ended. No more bids can be placed.';
-    container.appendChild(endedMsg);
     return container;
   }
 
@@ -87,7 +97,7 @@ function renderActiveForm(container: HTMLElement, item: Listing) {
 
   const submitButton = document.createElement('button');
   submitButton.type = 'submit';
-  submitButton.className = 'button-action';
+  submitButton.className = 'button-action w-fit px-12 mx-auto md:mx-0';
   submitButton.textContent = 'Place Bid';
 
   form.append(label, input, submitButton);
@@ -98,6 +108,9 @@ function renderActiveForm(container: HTMLElement, item: Listing) {
 
     try {
       const response = await placeBid(item.id, amount);
+
+      submitButton.disabled = true;
+      submitButton.textContent = 'Processing...';
 
       if (response?.data) {
         await store.fetchAndUpdateProfile();
@@ -110,6 +123,9 @@ function renderActiveForm(container: HTMLElement, item: Listing) {
           ? error.message
           : 'Something went wrong. Your bid was not placed.';
       showToast(displayMessage, 'error');
+
+      submitButton.disabled = false;
+      submitButton.textContent = 'Place Bid';
     }
   });
   container.appendChild(form);

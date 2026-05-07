@@ -3,6 +3,7 @@ import { formatStaticDate } from '../utils/dateFormatter';
 import { getHighestBid } from '../utils/bidHelpers';
 import { CountdownTimer } from './CountdownTimer';
 import { store } from '../utils/store';
+import { setupImageWithFallback } from '../utils/fallbackHelpers';
 
 export function ListingCard(item: Listing): HTMLElement {
   const isLoggedIn = !!store.getToken();
@@ -14,14 +15,15 @@ export function ListingCard(item: Listing): HTMLElement {
   imageContainer.className =
     'relative aspect-square w-full bg-cyan-100 overflow-hidden';
 
-  const img = document.createElement('img');
-  img.src =
-    item.media?.[0]?.url ||
+  const placeholder =
     'https://images.unsplash.com/photo-1615485736894-a2d2e6d4cd9a?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bW9ja3VwfGVufDB8fDB8fHwy';
-  img.alt = item.title;
-  img.className = 'w-full h-full object-cover';
-  img.setAttribute('crossorigin', 'anonymous');
-  img.referrerPolicy = 'no-referrer';
+
+  const img = document.createElement('img');
+  img.alt = item.title || '';
+  img.className =
+    'w-full h-full object-cover opacity-[0.01] transition-opacity duration-300';
+
+  setupImageWithFallback(img, item.media?.[0]?.url, placeholder);
 
   const timer = CountdownTimer(item.endsAt, 'card');
   imageContainer.appendChild(timer);

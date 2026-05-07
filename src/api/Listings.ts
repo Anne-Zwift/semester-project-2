@@ -11,7 +11,7 @@ export async function fetchListingId(
   );
 }
 
-// Search by title and description, a mix of ended and active
+// Search by title and description
 export async function fetchListingsSearch(
   query: string,
   activeOnly = true,
