@@ -25,6 +25,15 @@ export function BidForm(item: Listing): HTMLElement {
   const isOwner = user?.name === item.seller?.name;
   const isExpired = new Date(item.endsAt) < new Date();
 
+  if (isExpired) {
+    const endedMsg = document.createElement('p');
+    endedMsg.className = 'text-md text-error font-normal italic text-center';
+    endedMsg.textContent =
+      'This auction has ended. No more bids can be placed.';
+    container.appendChild(endedMsg);
+    return container;
+  }
+
   if (isLeading) {
     const leadingMsg = document.createElement('p');
     leadingMsg.className = 'text-md text-success font-bold italic text-center';
@@ -51,15 +60,6 @@ export function BidForm(item: Listing): HTMLElement {
     ownerMsg.className = 'text-md text-warning font-normal italic text-center';
     ownerMsg.textContent = 'You cannot bid on your own listing.';
     container.appendChild(ownerMsg);
-    return container;
-  }
-
-  if (isExpired) {
-    const endedMsg = document.createElement('p');
-    endedMsg.className = 'text-md text-error font-normal italic text-center';
-    endedMsg.textContent =
-      'This auction has ended. No more bids can be placed.';
-    container.appendChild(endedMsg);
     return container;
   }
 
