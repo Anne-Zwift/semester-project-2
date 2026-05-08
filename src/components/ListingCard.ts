@@ -143,7 +143,7 @@ export function ListingCard(item: Listing): HTMLElement {
   }
 
   const viewButton = document.createElement('a');
-  viewButton.href = `/listing/index.html?id=${item.id}`;
+  viewButton.href = `/listing?id=${item.id}`;
   viewButton.setAttribute('data-link', '');
   viewButton.className = 'button-primary w-full';
   viewButton.textContent = 'View Details';
