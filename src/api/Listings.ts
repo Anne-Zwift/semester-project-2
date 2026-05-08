@@ -58,6 +58,14 @@ export async function fetchListingsByTag(
   return response;
 }
 
+export async function fetchPopularListings(): Promise<ApiResponse<
+  Listing[]
+> | null> {
+  return get<Listing[]>(
+    `${API_ENDPOINTS.LISTINGS}?limit=100&_active=true&_bids=true&_seller=true`,
+  );
+}
+
 export async function placeBid(
   id: string,
   amount: number,
