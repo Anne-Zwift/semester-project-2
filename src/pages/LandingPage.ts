@@ -4,7 +4,11 @@ import { API_ENDPOINTS } from '../utils/constants';
 import type { Listing } from '../types/Listing';
 import { ListingCard } from '../components/ListingCard';
 import { SearchBar } from '../components/SearchBar';
-import { fetchListingsByTag, fetchListingsSearch } from '../api/Listings';
+import {
+  fetchListingsByTag,
+  fetchListingsSearch,
+  fetchPopularListings,
+} from '../api/Listings';
 import { showToast } from '../components/Toast';
 import { SkeletonCard } from '../components/SkeletonCard';
 import { Carousel } from '../components/Carousel';
@@ -174,7 +178,11 @@ export async function LandingPage(
           !activeTag.trim() &&
           allListings.length > 0
         ) {
-          carouselContainer.appendChild(Carousel(allListings));
+          const carouselResponse = await fetchPopularListings();
+          const carouselListings = carouselResponse?.data || [];
+          if (carouselListings.length > 0) {
+            carouselContainer.appendChild(Carousel(carouselListings));
+          }
         }
         carouselContainer.after(divider);
 
