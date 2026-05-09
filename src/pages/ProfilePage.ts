@@ -96,7 +96,8 @@ export async function ProfilePage(name?: string): Promise<HTMLElement> {
     header.className = 'relative w-full -mt-12 mb-4';
 
     const avatarWrapper = document.createElement('div');
-    avatarWrapper.className = 'relative z-10 flex items-center gap-4';
+    avatarWrapper.className =
+      'relative z-10 flex flex-col items-center gap-4 sm:flex-row sm:items-end sm:justify-between px-4 w-full';
 
     const userInitials =
       profileData?.name
@@ -109,7 +110,7 @@ export async function ProfilePage(name?: string): Promise<HTMLElement> {
 
     const avatar = document.createElement('div');
     avatar.className =
-      'w-24 h-24 rounded-full bg-navy border-4 border-white flex items-center justify-center text-white text-xl font-bold shadow-lg mx-auto';
+      'w-24 h-24 rounded-full bg-navy border-4 border-white flex flex-col items-center justify-center text-white text-xl font-bold shadow-lg mx-auto';
 
     if (profileData?.avatar?.url) {
       const img = document.createElement('img');
@@ -281,11 +282,12 @@ export async function ProfilePage(name?: string): Promise<HTMLElement> {
               'p-4 border rounded-xl mb-2 text-left flex flex-col gap-2 group hover:border-navy transition-all bg-white shadow-sm';
 
             const topRow = document.createElement('div');
-            topRow.className = 'flex justify-between items-center w-full';
+            topRow.className =
+              'flex flex-col gap-3 mb-4 sm:flex-row sm:justify-between sm:items-center';
 
             const title = document.createElement('span');
             title.className =
-              'font-semibold text-navy truncate cursor-pointer hover:underline';
+              'text-lg font-bold truncate pr-2 text-navy truncate cursor-pointer hover:underline';
             title.textContent = `${item.title} ↗`;
 
             title.addEventListener('click', () => {
@@ -298,10 +300,11 @@ export async function ProfilePage(name?: string): Promise<HTMLElement> {
             });
 
             const actionsWrapper = document.createElement('div');
-            actionsWrapper.className = 'flex gap-2';
+            actionsWrapper.className = 'flex gap-2 w-full mt-2 sm:w-auto';
 
             const editBtn = document.createElement('button');
-            editBtn.className = 'button-action';
+            editBtn.className =
+              'button-action flex-1 bg-cyan/20 border border-cyan text-navy py-2 rounded-full text-sm font-bold';
             editBtn.textContent = 'Edit';
             editBtn.addEventListener('click', () => {
               const modal = ListingForm(item, () => setActiveTab('Listings'));
@@ -309,7 +312,8 @@ export async function ProfilePage(name?: string): Promise<HTMLElement> {
             });
 
             const deleteBtn = document.createElement('button');
-            deleteBtn.className = 'button-action';
+            deleteBtn.className =
+              'button-action flex-1 bg-error/10 text-navy border border-error py-2 rounded-full text-sm font-bold';
             deleteBtn.textContent = 'Delete';
             deleteBtn.addEventListener('click', () => {
               showDeleteConfirmation(item.id, () => setActiveTab('Listings'));
@@ -344,14 +348,14 @@ export async function ProfilePage(name?: string): Promise<HTMLElement> {
           (item) => {
             const container = document.createElement('div');
             container.className =
-              'p-4 border rounded-xl mb-2 text-left flex justify-between items-center bg-white shadow-sm hover:border-navy transition-all group';
+              'p-4 border rounded-xl mb-2 text-left flex justify-between items-start bg-white shadow-sm hover:border-navy transition-all group gap-2';
 
             const infoWrapper = document.createElement('div');
-            infoWrapper.className = 'flex flex-col';
+            infoWrapper.className = 'flex flex-col flex-1 min-w-0';
 
             const title = document.createElement('span');
             title.className =
-              'font-semibold text-navy cursor-pointer hover:underline';
+              'font-semibold text-navy cursor-pointer hover:underline break-words pr-2';
             title.textContent = `${item.listing?.title || 'Unknown Listing'} ↗`;
 
             title.addEventListener('click', () => {
@@ -371,8 +375,8 @@ export async function ProfilePage(name?: string): Promise<HTMLElement> {
 
             const amount = document.createElement('span');
             amount.className =
-              'font-mono text-sm text-cyan-600 bg-cyan-50 px-3 py-1 rounded-full';
-            amount.textContent = `${item.amount}credits`;
+              'font-mono text-sm text-cyan-600 bg-cyan-50 px-3 py-1 rounded-full whitespace-nowrap flex-shrink-0';
+            amount.textContent = `${item.amount} credits`;
 
             container.append(infoWrapper, amount);
             return container;
@@ -416,7 +420,7 @@ export async function ProfilePage(name?: string): Promise<HTMLElement> {
 
             const amount = document.createElement('span');
             amount.className =
-              'font-bold text-green-700 bg-white border border-green-200 px-3 py-1 rounded-full text-sm shadow-sm';
+              'font-mono text-xs text-success bg-white border border-green-200 px-3 py-1 rounded-full md:text-sm whitespace-nowrap flex-shrink-0';
             amount.textContent = `${item.bids?.sort((a, b) => b.amount - a.amount)[0].amount || 0} credits`;
 
             priceWrapper.append(amount);

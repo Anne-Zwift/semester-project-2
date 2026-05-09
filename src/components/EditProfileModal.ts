@@ -83,7 +83,7 @@ export function EditProfileModal(
   const saveBtn = document.createElement('button');
   saveBtn.type = 'submit';
   saveBtn.className =
-    'flex-1 py-2 bg-navy text-white rounded-lg hover:bg-navy/90 font-bold';
+    'flex-1 py-2 bg-navy text-white rounded-lg text-sm hover:bg-navy/90 font-bold';
   saveBtn.textContent = 'Save Changes';
 
   const errorMsg = document.createElement('p');
