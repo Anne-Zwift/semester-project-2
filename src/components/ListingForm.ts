@@ -106,7 +106,7 @@ export function ListingForm(
 
   const addButton = document.createElement('button');
   addButton.type = 'button';
-  addButton.className = 'button-action';
+  addButton.className = 'button-action bg-cyan-600/20 border border-navy';
   addButton.textContent = '+ Image';
 
   addButton.addEventListener('click', () => {
@@ -126,14 +126,15 @@ export function ListingForm(
 
   const submitButton = document.createElement('button');
   submitButton.type = 'submit';
-  submitButton.className = 'button-action';
+  submitButton.className =
+    'button-action bg-cyan/10 font-bold border border-navy';
   submitButton.textContent = existingListing
     ? 'Save Changes'
     : 'Create Listing';
 
   const cancelBtn = document.createElement('button');
   cancelBtn.type = 'button';
-  cancelBtn.className = 'button-action';
+  cancelBtn.className = 'button-action border border-navy';
   cancelBtn.textContent = 'Cancel';
 
   cancelBtn.addEventListener('click', () => {
@@ -145,7 +146,8 @@ export function ListingForm(
   if (existingListing) {
     const deleteBtn = document.createElement('button');
     deleteBtn.type = 'button';
-    deleteBtn.className = 'button-action';
+    deleteBtn.className =
+      'button-action bg-error/10 text-navy border border-error';
     deleteBtn.textContent = 'Delete Listing';
 
     deleteBtn.addEventListener('click', () => {

@@ -2,16 +2,20 @@ import type { Profile } from '../types/Profile';
 
 export function ProfileCard(profile: Profile): HTMLElement {
   const card = document.createElement('article');
-  card.className =
-    'bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden';
+  card.className = 'bg-white rounded-xl shadow-md border border-gray-200';
 
   const banner = document.createElement('div');
-  banner.className = 'w-full h-24 bg-gradient-to-r from-navy to-navy/50';
+  banner.className =
+    'w-full h-24 bg-gradient-to-r from-navy to-navy/50 overflow-hidden rounded-t-xl';
   if (profile.banner?.url) {
     const img = document.createElement('img');
     img.src = profile.banner.url;
     img.alt = profile.banner.alt || `${profile.name}'s banner`;
     img.className = 'w-full h-full object-cover';
+
+    img.setAttribute('crossorigin', 'anonymous');
+    img.referrerPolicy = 'no-referrer';
+
     banner.appendChild(img);
   }
 
@@ -20,12 +24,16 @@ export function ProfileCard(profile: Profile): HTMLElement {
 
   const avatar = document.createElement('div');
   avatar.className =
-    'w-16 h-16 rounded-full bg-navy border-4 border-white flex items-center justify-center text-white text-lg font-bold shadow-lg -mt-10';
+    'w-16 h-16 rounded-full bg-navy border-4 border-white flex items-center justify-center text-white text-lg font-bold shadow-lg -mt-10 flex-shrink-0 relative z-10';
   if (profile.avatar?.url) {
     const img = document.createElement('img');
     img.src = profile.avatar.url;
     img.alt = profile.avatar.alt || `${profile.name}'s avatar`;
     img.className = 'w-full h-full rounded-full object-cover';
+
+    img.setAttribute('crossorigin', 'anonymous');
+    img.referrerPolicy = 'no-referrer';
+
     avatar.appendChild(img);
   } else {
     avatar.textContent = profile.name.slice(0, 2).toLocaleUpperCase();
