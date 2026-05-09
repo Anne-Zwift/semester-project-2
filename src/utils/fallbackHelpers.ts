@@ -12,7 +12,6 @@ export function setupImageWithFallback(
   src: string | undefined,
   placeholder: string,
 ): void {
-  imgElement.setAttribute('crossorigin', 'anonymous');
   imgElement.referrerPolicy = 'no-referrer';
 
   imgElement.classList.add(
@@ -31,13 +30,11 @@ export function setupImageWithFallback(
   const handleError = () => {
     imgElement.removeEventListener('error', handleError);
 
-    imgElement.removeAttribute('crossorigin');
-
     if (imgElement.src !== placeholder) {
       imgElement.src = placeholder;
     }
 
-    imgElement.classList.replace('opacity-[0.01]', 'opacity-50');
+    imgElement.classList.replace('opacity-[0.01]', 'opacity-100');
   };
 
   imgElement.addEventListener('error', handleError, { once: true });
